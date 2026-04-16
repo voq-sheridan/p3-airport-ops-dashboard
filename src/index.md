@@ -449,6 +449,35 @@ title: Project 3
     margin-bottom: 0.45rem;
   }
 
+  .list-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .list-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .list-filter-label {
+    color: var(--primary);
+    font-size: 0.74rem;
+    font-weight: 700;
+  }
+
+  .list-filter-select {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--primary);
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 0.2rem 0.4rem;
+  }
+
   .list-toggle-btn {
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -589,6 +618,37 @@ function formatTimeEt(iso) {
 
 function formatHourLabel(hour) {
   return `${String(hour).padStart(2, "0")}:00`;
+}
+
+function getDateLabel(dateObj) {
+  return dateObj.toLocaleDateString("en-CA", {
+    timeZone: "America/Toronto",
+    month: "short",
+    day: "numeric"
+  });
+}
+
+function isWithinTimeRange(dateObj, selectedRange) {
+  if (!selectedRange || selectedRange === "all") return true;
+  const hour = torontoHour(dateObj);
+  if (selectedRange === "00-06") return hour >= 0 && hour < 6;
+  if (selectedRange === "06-12") return hour >= 6 && hour < 12;
+  if (selectedRange === "12-18") return hour >= 12 && hour < 18;
+  if (selectedRange === "18-24") return hour >= 18 && hour < 24;
+  return true;
+}
+
+function filterFlightsByDateAndTime(flights, selectedDate, selectedRange) {
+  return flights.filter((f) => {
+    const dt = toLocalDate(f.scheduledTime);
+    if (!dt) return false;
+
+    if (selectedDate && selectedDate !== "all" && getDateLabel(dt) !== selectedDate) {
+      return false;
+    }
+
+    return isWithinTimeRange(dt, selectedRange);
+  });
 }
 
 function inferCountryFromIata(iata) {
@@ -1003,13 +1063,47 @@ function buildUI() {
     toggleBtn.textContent = "Show list";
     const body = document.createElement("div");
     body.className = "list-panel-body collapsed";
+
+    const filters = document.createElement("div");
+    filters.className = "list-filters";
+
+    const dateGroup = document.createElement("div");
+    dateGroup.className = "list-filter-group";
+    const dateLabel = document.createElement("label");
+    dateLabel.className = "list-filter-label";
+    dateLabel.textContent = "Date:";
+    const dateSelect = document.createElement("select");
+    dateSelect.className = "list-filter-select";
+    dateSelect.innerHTML = `<option value="all">All Dates</option>`;
+    dateGroup.append(dateLabel, dateSelect);
+
+    const timeGroup = document.createElement("div");
+    timeGroup.className = "list-filter-group";
+    const timeLabel = document.createElement("label");
+    timeLabel.className = "list-filter-label";
+    timeLabel.textContent = "Time:";
+    const timeSelect = document.createElement("select");
+    timeSelect.className = "list-filter-select";
+    timeSelect.innerHTML = `
+      <option value="all">All Times</option>
+      <option value="00-06">00:00–05:59</option>
+      <option value="06-12">06:00–11:59</option>
+      <option value="12-18">12:00–17:59</option>
+      <option value="18-24">18:00–23:59</option>`;
+    timeGroup.append(timeLabel, timeSelect);
+
+    filters.append(dateGroup, timeGroup);
+
+    const content = document.createElement("div");
+
+    body.append(filters, content);
     toggleBtn.addEventListener("click", () => {
       const collapsed = body.classList.toggle("collapsed");
       toggleBtn.textContent = collapsed ? "Show list" : "Hide list";
     });
     header.append(heading, toggleBtn);
     panel.append(header, body);
-    return { panel, body };
+    return { panel, body: content, dateSelect, timeSelect };
   }
 
   const depList = createListPanel("Departure List");
@@ -1045,7 +1139,11 @@ function buildUI() {
       coverageMessageEl: hrGrid.querySelector('[data-hr="coverageMessage"]')
     },
     depListBody: depList.body,
-    arrListBody: arrList.body
+    arrListBody: arrList.body,
+    depListDateFilter: depList.dateSelect,
+    depListTimeFilter: depList.timeSelect,
+    arrListDateFilter: arrList.dateSelect,
+    arrListTimeFilter: arrList.timeSelect
   };
 }
 
@@ -1435,11 +1533,53 @@ function renderFlightListTable(el, flights, typeBadge, locationHeader, emptyText
   el.appendChild(table);
 }
 
+function updateDateFilterOptions(selectEl, flights) {
+  const selected = selectEl.value || "all";
+  const labelByDateKey = new Map();
+
+  flights.forEach((f) => {
+    const dt = toLocalDate(f.scheduledTime);
+    if (!dt) return;
+    const dateKey = torontoDateKey(dt);
+    if (!labelByDateKey.has(dateKey)) {
+      labelByDateKey.set(dateKey, getDateLabel(dt));
+    }
+  });
+
+  const sorted = Array.from(labelByDateKey.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+
+  selectEl.innerHTML = '<option value="all">All Dates</option>';
+  sorted.forEach(([, label]) => {
+    const opt = document.createElement("option");
+    opt.value = label;
+    opt.textContent = label;
+    selectEl.appendChild(opt);
+  });
+
+  const nextValue = Array.from(selectEl.options).some((o) => o.value === selected) ? selected : "all";
+  selectEl.value = nextValue;
+}
+
 function renderFlightLists(filteredFlights) {
   const departures = filteredFlights.filter((f) => isYYZDeparture(f));
   const arrivals = filteredFlights.filter((f) => isYYZArrival(f));
-  renderFlightListTable(ui.depListBody, departures, "dep", "Destination", "No departure flights for this filter.");
-  renderFlightListTable(ui.arrListBody, arrivals, "arr", "Origin", "No arrival flights for this filter.");
+
+  updateDateFilterOptions(ui.depListDateFilter, departures);
+  updateDateFilterOptions(ui.arrListDateFilter, arrivals);
+
+  const filteredDepartures = filterFlightsByDateAndTime(
+    departures,
+    ui.depListDateFilter.value,
+    ui.depListTimeFilter.value
+  );
+  const filteredArrivals = filterFlightsByDateAndTime(
+    arrivals,
+    ui.arrListDateFilter.value,
+    ui.arrListTimeFilter.value
+  );
+
+  renderFlightListTable(ui.depListBody, filteredDepartures, "dep", "Destination", "No flights match the selected filters.");
+  renderFlightListTable(ui.arrListBody, filteredArrivals, "arr", "Origin", "No flights match the selected filters.");
 }
 
 function renderForSelection() {
@@ -1486,6 +1626,15 @@ ui.scenarioSelect.addEventListener("change", (event) => {
   selectedScenario = event.target.value;
   renderHrSummary();
 });
+
+const handleListFilterChange = () => {
+  renderFlightLists(getFilteredFlights());
+};
+
+ui.depListDateFilter.addEventListener("change", handleListFilterChange);
+ui.depListTimeFilter.addEventListener("change", handleListFilterChange);
+ui.arrListDateFilter.addEventListener("change", handleListFilterChange);
+ui.arrListTimeFilter.addEventListener("change", handleListFilterChange);
 
 function applyNewData(srcData) {
   allFlights = (srcData?.flights ?? []).map(normalizeFlightRecord);
