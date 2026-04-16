@@ -137,7 +137,7 @@ title: Project 3
   .coverage-indicator {
     font-size: 2.95rem;
     line-height: 1;
-    animation: coverage-pulse 1.2s ease-in-out infinite;
+    animation: coverage-pulse 1.9s ease-in-out infinite;
     transform-origin: center;
   }
 
@@ -148,7 +148,7 @@ title: Project 3
       opacity: 0.9;
     }
     50% {
-      transform: scale(1.12);
+      transform: scale(0.5);
       opacity: 1;
     }
   }
