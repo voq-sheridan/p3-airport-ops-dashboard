@@ -1638,7 +1638,7 @@ function renderAdvisory(box, label, heatmapData) {
     prepLine = "Begin planning at least 4 hours in advance";
   } else if (level === "Busy") {
     planningLine = `Busy period expected between ${expectedRange}`;
-    prepLine = "Review staffing coverage 4 hours ahead";
+    prepLine = "Prepare additional staffing support";
   } else if (level === "Moderate") {
     planningLine = "Steady activity expected";
     prepLine = "No immediate escalation required";
