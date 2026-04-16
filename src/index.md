@@ -435,13 +435,18 @@ title: Project 3
   .staff-insight-badge {
     display: inline-block;
     margin-top: 0.3rem;
-    padding: 0.15rem 0.45rem;
+    padding: 0.19rem 0.56rem;
     border-radius: 999px;
-    font-size: 0.75rem;
+    font-size: 0.94rem;
     font-weight: 700;
     color: #051F48;
-    background: rgba(145, 156, 0, 0.16);
   }
+
+  .staff-insight-badge.level-quiet { background: #dcfce7; }
+  .staff-insight-badge.level-low { background: #f5efe0; }
+  .staff-insight-badge.level-moderate { background: #fde6c8; }
+  .staff-insight-badge.level-busy { background: #f9c784; }
+  .staff-insight-badge.level-peak { background: #fca5a5; }
 
   .advisory-subline {
     margin-top: 0.25rem;
