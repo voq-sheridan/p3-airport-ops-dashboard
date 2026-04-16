@@ -361,7 +361,19 @@ title: Project 3
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 700;
-    background: rgba(145, 156, 0, 0.16);
+    color: #051F48;
+  }
+
+  .staff-insight-badge.level-quiet { background: #f3f4f6; }
+  .staff-insight-badge.level-low { background: #f5efe0; }
+  .staff-insight-badge.level-moderate { background: #fde6c8; }
+  .staff-insight-badge.level-busy { background: #f9c784; }
+  .staff-insight-badge.level-peak { background: #fca5a5; }
+
+  .advisory-subline {
+    margin-top: 0.25rem;
+    color: #334155;
+    font-size: 0.78rem;
   }
 
   .detail-panel {
@@ -645,10 +657,7 @@ function filterFlightsByType(flights, type) {
     return flights.filter((flight) => {
       const dep = normalizeCountryCode(flight.departure?.airport?.countryCode);
       const arr = normalizeCountryCode(flight.arrival?.airport?.countryCode);
-
-      // Only keep flights that are confirmed Canada -> Canada.
-      // Any unknown origin/destination is excluded.
-      return dep === "CA" && arr === "CA";
+      return dep && arr && dep === arr;
     });
   }
 
@@ -656,9 +665,7 @@ function filterFlightsByType(flights, type) {
     return flights.filter((flight) => {
       const dep = normalizeCountryCode(flight.departure?.airport?.countryCode);
       const arr = normalizeCountryCode(flight.arrival?.airport?.countryCode);
-      // Exclude unknown origin/destination.
-      if (!dep || !arr) return false;
-      return dep !== arr;
+      return dep && arr && dep !== arr;
     });
   }
 
@@ -780,18 +787,31 @@ function updateHeatmapLegendFromBands(legendEl, bands) {
 }
 
 function getDemandLevel(value) {
-  if (value <= 0) return "Quiet";
-  if (value <= currentHeatmapBands.lowMax) return "Low";
-  if (value <= currentHeatmapBands.moderateMax) return "Moderate";
-  if (value <= currentHeatmapBands.busyMax) return "Busy";
+  if (value === 0) return "Quiet";
+  if (value <= 12) return "Low";
+  if (value <= 23) return "Moderate";
+  if (value <= 35) return "Busy";
   return "Peak";
 }
 
-function getAdvisoryMessage(level) {
-  if (level === "Moderate") return "Monitor staffing";
-  if (level === "Busy") return "Prepare additional staff";
-  if (level === "Peak") return "Increase staffing coverage";
-  return "Standard staffing coverage";
+function getStaffingRecommendation(level) {
+  switch (level) {
+    case "Peak": return "Increase staffing coverage";
+    case "Busy": return "Prepare additional staff";
+    case "Moderate": return "Monitor staffing";
+    case "Low": return "Normal staffing sufficient";
+    default: return "No action needed";
+  }
+}
+
+function getDemandBadgeClass(level) {
+  return `level-${String(level || "quiet").toLowerCase()}`;
+}
+
+function getDepartmentImpact(direction) {
+  return direction === "departures"
+    ? "Likely impact: check-in, security screening, gate support"
+    : "Likely impact: baggage handling, customs, arrival flow";
 }
 
 function createMetricCard(label) {
@@ -912,10 +932,10 @@ function buildUI() {
   const toggleGroup = document.createElement("div");
   toggleGroup.className = "toggle-group";
   const domesticBtn = document.createElement("button");
-  domesticBtn.className = "toggle-btn";
+  domesticBtn.className = "toggle-btn active";
   domesticBtn.textContent = "Domestic";
   const internationalBtn = document.createElement("button");
-  internationalBtn.className = "toggle-btn active";
+  internationalBtn.className = "toggle-btn";
   internationalBtn.textContent = "International";
   toggleGroup.append(domesticBtn, internationalBtn);
   summaryHead.append(left, toggleGroup);
@@ -1036,7 +1056,7 @@ let allFlights = [];
 let lastFetchedAtIso = data?.fetchedAt || null;
 let fetchedAt = data?.fetchedAt ? new Date(data.fetchedAt) : null;
 let loadedDates = data?.dates || {};
-let selectedFlightType = "international";
+let selectedFlightType = "domestic";
 let selectedScenario = "tight";
 let selectedCell = null;
 let depHeatmapCache = null;
@@ -1272,14 +1292,52 @@ function drawDirectionalHeatmap(svg, container, heatmapData, mode, filteredFligh
 }
 
 function renderAdvisory(box, label, heatmapData) {
-  const todayKey = torontoDateKey(new Date());
-  const todayCells = heatmapData.cells.filter((c) => c.dateKey === todayKey);
-  const peak = d3.max(todayCells, (c) => c.total) || 0;
-  const level = getDemandLevel(peak);
+  const direction = label.toLowerCase().startsWith("departure") ? "departures" : "arrivals";
+  const now = new Date();
+  const nowDateKey = torontoDateKey(now);
+  const nowHour = torontoHour(now);
+  const hourMs = 60 * 60 * 1000;
+  const windowStartTs = parseDateKey(nowDateKey).getTime() + nowHour * hourMs;
+  const windowEndTs = windowStartTs + 4 * hourMs;
+
+  const lookAheadCells = heatmapData.cells
+    .map((c) => ({
+      ...c,
+      ts: parseDateKey(c.dateKey).getTime() + c.hour * hourMs
+    }))
+    .filter((c) => c.ts >= windowStartTs && c.ts < windowEndTs)
+    .sort((a, b) => a.ts - b.ts);
+
+  const maxCount = d3.max(lookAheadCells, (c) => c.total) || 0;
+  const level = getDemandLevel(maxCount);
+  const recommendation = getStaffingRecommendation(level);
+  const impactLine = getDepartmentImpact(direction);
+  const matchingCells = lookAheadCells.filter((c) => getDemandLevel(c.total) === level);
+  const startHour = matchingCells.length ? matchingCells[0].hour : nowHour;
+  const endHour = matchingCells.length ? matchingCells[matchingCells.length - 1].hour + 1 : nowHour + 1;
+  const expectedRange = `${formatHourLabel(startHour)}–${formatHourLabel(endHour % 24)}`;
+
+  let planningLine = "No significant demand spike expected";
+  let prepLine = "Normal staffing is sufficient";
+
+  if (level === "Peak") {
+    planningLine = `Peak demand expected between ${expectedRange}`;
+    prepLine = "Begin planning at least 4 hours in advance";
+  } else if (level === "Busy") {
+    planningLine = `Busy period expected between ${expectedRange}`;
+    prepLine = "Review staffing coverage 4 hours ahead";
+  } else if (level === "Moderate") {
+    planningLine = "Steady activity expected";
+    prepLine = "No immediate escalation required";
+  }
+
   box.innerHTML = `
     <h4>${label} Advisory (${selectedFlightType === "domestic" ? "Domestic" : "International"})</h4>
-    <div class="staff-insight-badge">${level}</div>
-    <div>${getAdvisoryMessage(level)}</div>`;
+    <div class="staff-insight-badge ${getDemandBadgeClass(level)}">${level}</div>
+    <div>${recommendation}</div>
+    <div class="advisory-subline">${planningLine}</div>
+    <div class="advisory-subline">${prepLine}</div>
+    <div class="advisory-subline">${impactLine}</div>`;
 }
 
 function renderSummaryCards(filteredFlights) {
