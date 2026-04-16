@@ -72,7 +72,7 @@ jobs:
         run: |
           mkdir -p dist/data
           latest="$(ls -t dist/_file/data/flights*.json 2>/dev/null | head -n1 || true)"
-          site_data_url="https://voq-sheridan.github.io/flight-demand-visualizer/data/flights.json"
+          site_data_url="https://voq-sheridan.github.io/p3-airport-ops-dashboard/data/flights.json"
           if [ "${USE_FALLBACK_SNAPSHOT:-false}" = "true" ]; then
             if curl -fsSL "$site_data_url" -o dist/data/flights.json; then
               echo '::warning::Using previously published data/flights.json fallback from GitHub Pages.'
