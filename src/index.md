@@ -361,6 +361,11 @@ title: Project 3
     fill: #4a5668;
   }
 
+  .heatmap-hour-label,
+  .heatmap-date-label {
+    font-size: 0.86rem;
+  }
+
   .heatmap-cell-selected {
     stroke: var(--primary);
     stroke-width: 2;
