@@ -273,6 +273,22 @@ title: Project 3
     stroke-width: 2;
   }
 
+  .current-hour-highlight-under {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 3.2;
+    opacity: 0.95;
+    pointer-events: none;
+  }
+
+  .current-hour-highlight {
+    fill: none;
+    stroke: #0ea5e9;
+    stroke-width: 2.2;
+    stroke-dasharray: 4 2;
+    pointer-events: none;
+  }
+
   .heatmap-legend {
     display: flex;
     align-items: flex-start;
@@ -1185,21 +1201,6 @@ function drawDirectionalHeatmap(svg, container, heatmapData, mode, filteredFligh
       })
     );
 
-  if (todayRowIndex >= 0 && currentHour >= 0 && currentHour <= 23) {
-    const x = margin.left + currentHour * (cellSize + gap);
-    const y = margin.top + todayRowIndex * (cellSize + gap);
-    g.append("rect")
-      .attr("x", x - 2)
-      .attr("y", y - 2)
-      .attr("width", cellSize + 4)
-      .attr("height", cellSize + 4)
-      .attr("rx", 5)
-      .attr("fill", "none")
-      .attr("stroke", "#60a5fa")
-      .attr("stroke-width", 1.2)
-      .attr("opacity", 0.85);
-  }
-
   g.selectAll(".heatmap-cell")
     .data(cells)
     .join("rect")
@@ -1223,6 +1224,26 @@ function drawDirectionalHeatmap(svg, container, heatmapData, mode, filteredFligh
       renderDetailPanel(event, d, mode, filteredFlights);
       renderForSelection();
     });
+
+  if (todayRowIndex >= 0 && currentHour >= 0 && currentHour <= 23) {
+    const x = margin.left + currentHour * (cellSize + gap);
+    const y = margin.top + todayRowIndex * (cellSize + gap);
+    g.append("rect")
+      .attr("class", "current-hour-highlight-under")
+      .attr("x", x - 3)
+      .attr("y", y - 3)
+      .attr("width", cellSize + 6)
+      .attr("height", cellSize + 6)
+      .attr("rx", 6);
+
+    g.append("rect")
+      .attr("class", "current-hour-highlight")
+      .attr("x", x - 3)
+      .attr("y", y - 3)
+      .attr("width", cellSize + 6)
+      .attr("height", cellSize + 6)
+      .attr("rx", 6);
+  }
 
   g.selectAll(".heatmap-total-bg")
     .data(dateKeys)
