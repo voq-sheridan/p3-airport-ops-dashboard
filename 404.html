@@ -19,16 +19,18 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.968c4beb.json","lastModified":1776376330356,"size":1333915});
-registerFile("./toronto-pearson-airport-logo.png", {"name":"./toronto-pearson-airport-logo.png","mimeType":"image/png","path":"./_file/toronto-pearson-airport-logo.8c2607c0.png","lastModified":1776376283635,"size":28309});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.c54f5511.json","lastModified":1776376549334,"size":1333915});
+registerFile("./favicon.svg", {"name":"./favicon.svg","mimeType":"image/svg+xml","path":"./_file/favicon.e761dfd5.svg","lastModified":1776376507832,"size":302});
+registerFile("./toronto-pearson-airport-logo.png", {"name":"./toronto-pearson-airport-logo.png","mimeType":"image/png","path":"./_file/toronto-pearson-airport-logo.8c2607c0.png","lastModified":1776376507832,"size":28309});
 
-define({id: "22fa3329", inputs: ["FileAttachment"], outputs: ["data","dashboardLogoUrl"], body: async (FileAttachment) => {
+define({id: "34b7f138", inputs: ["FileAttachment"], outputs: ["data","dashboardLogoUrl","dashboardLogoFallbackUrl"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
 const dashboardLogoUrl = await FileAttachment("./toronto-pearson-airport-logo.png").url();
-return {data,dashboardLogoUrl};
+const dashboardLogoFallbackUrl = await FileAttachment("./favicon.svg").url();
+return {data,dashboardLogoUrl,dashboardLogoFallbackUrl};
 }});
 
-define({id: "6f8f0d94", inputs: ["dashboardLogoUrl","display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","getDateLabel","isWithinTimeRange","filterFlightsByDateAndTime","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","getDelayMinutes","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getStaffingRecommendation","getDemandBadgeClass","getDepartmentImpact","createMetricCard","createOperationalInsightsCarouselCard","staffingScenarios","formatInt","getCoverageIndicatorClass","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedScenario","selectedCell","depHeatmapCache","arrHeatmapCache","renderHrSummary","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","renderSummaryCards","renderFlightListTable","updateDateFilterOptions","renderFlightLists","renderForSelection","updateToggleButtons","handleListFilterChange","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (dashboardLogoUrl,display,data,FileAttachment,invalidation) => {
+define({id: "1f00651f", inputs: ["dashboardLogoUrl","dashboardLogoFallbackUrl","display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","getDateLabel","isWithinTimeRange","filterFlightsByDateAndTime","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","getDelayMinutes","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getStaffingRecommendation","getDemandBadgeClass","getDepartmentImpact","createMetricCard","createOperationalInsightsCarouselCard","staffingScenarios","formatInt","getCoverageIndicatorClass","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedScenario","selectedCell","depHeatmapCache","arrHeatmapCache","renderHrSummary","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","renderSummaryCards","renderFlightListTable","updateDateFilterOptions","renderFlightLists","renderForSelection","updateToggleButtons","handleListFilterChange","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (dashboardLogoUrl,dashboardLogoFallbackUrl,display,data,FileAttachment,invalidation) => {
 let d3;
 try {
   d3 = await import("./_npm/d3@7.9.0/66d82917.js");
@@ -567,6 +569,9 @@ async function buildUI() {
   const logo = document.createElement("img");
   logo.className = "dashboard-logo";
   logo.src = dashboardLogoUrl;
+  logo.addEventListener("error", () => {
+    logo.src = dashboardLogoFallbackUrl;
+  }, { once: true });
   logo.alt = "Toronto Pearson logo";
   logoWrap.appendChild(logo);
 
@@ -1473,9 +1478,14 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
   .dashboard-logo {
     display: block;
     max-height: 72px;
+    max-width: 240px;
     width: auto;
     height: auto;
     object-fit: contain;
+    background: #ffffff;
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+    padding: 0.25rem 0.4rem;
   }
 
   .dashboard-subtitle {
@@ -2086,11 +2096,11 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
     }
   }
 </style>
-<div class="observablehq observablehq--block"><!--:22fa3329:--></div>
-<div class="observablehq observablehq--block"><!--:6f8f0d94:--></div>
+<div class="observablehq observablehq--block"><!--:34b7f138:--></div>
+<div class="observablehq observablehq--block"><!--:1f00651f:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T21:51:29">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T21:55:16">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
