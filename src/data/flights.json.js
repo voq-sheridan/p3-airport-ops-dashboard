@@ -192,7 +192,16 @@ async function fetchFlightsForDate(targetDate) {
     }
 
     const mappedDepartures = departures
-      .map((flight) => ({
+      .map((flight) => {
+        const movementAirport = flight?.movement?.airport || {};
+        const movementCountryCode =
+          movementAirport?.countryCode ||
+          movementAirport?.country?.code ||
+          movementAirport?.country?.countryCode ||
+          movementAirport?.municipalityCountryCode ||
+          null;
+
+        return {
         type: "departure",
         flightNumber: flight?.number || "N/A",
         airline: flight?.airline?.name || flight?.number || "Unknown",
@@ -200,15 +209,39 @@ async function fetchFlightsForDate(targetDate) {
         otherAirportCode: flight?.movement?.airport?.iata || "N/A",
         departureIata: "YYZ",
         arrivalIata: flight?.movement?.airport?.iata || "",
+        departureCountryCode: "CA",
+        arrivalCountryCode: movementCountryCode,
+        departure: {
+          airport: {
+            iata: "YYZ",
+            countryCode: "CA"
+          }
+        },
+        arrival: {
+          airport: {
+            iata: flight?.movement?.airport?.iata || "",
+            countryCode: movementCountryCode
+          }
+        },
         scheduledTime: toScheduledIso(flight?.movement?.scheduledTime?.utc) || toScheduledIso(flight?.movement?.scheduledTime?.local),
         status: mapStatus(flight?.status),
         resolvedStatus: mapStatus(flight?.status),
         date: dateText
-      }))
+        };
+      })
       .filter((f) => f.scheduledTime);
 
     const mappedArrivals = arrivals
-      .map((flight) => ({
+      .map((flight) => {
+        const movementAirport = flight?.movement?.airport || {};
+        const movementCountryCode =
+          movementAirport?.countryCode ||
+          movementAirport?.country?.code ||
+          movementAirport?.country?.countryCode ||
+          movementAirport?.municipalityCountryCode ||
+          null;
+
+        return {
         type: "arrival",
         flightNumber: flight?.number || "N/A",
         airline: flight?.airline?.name || flight?.number || "Unknown",
@@ -216,11 +249,26 @@ async function fetchFlightsForDate(targetDate) {
         otherAirportCode: flight?.movement?.airport?.iata || "N/A",
         departureIata: flight?.movement?.airport?.iata || "",
         arrivalIata: "YYZ",
+        departureCountryCode: movementCountryCode,
+        arrivalCountryCode: "CA",
+        departure: {
+          airport: {
+            iata: flight?.movement?.airport?.iata || "",
+            countryCode: movementCountryCode
+          }
+        },
+        arrival: {
+          airport: {
+            iata: "YYZ",
+            countryCode: "CA"
+          }
+        },
         scheduledTime: toScheduledIso(flight?.movement?.scheduledTime?.utc) || toScheduledIso(flight?.movement?.scheduledTime?.local),
         status: mapStatus(flight?.status),
         resolvedStatus: mapStatus(flight?.status),
         date: dateText
-      }))
+        };
+      })
       .filter((f) => f.scheduledTime);
 
     const rawDepartures = mappedDepartures;
