@@ -1206,7 +1206,7 @@ async function buildUI() {
 
   const title = document.createElement("h2");
   title.className = "dashboard-title";
-  title.textContent = "Airport Performance Dashboard - Toronto Pearson International Airport (YYZ)";
+  title.textContent = "Airport Performance Dashboard - </br>Toronto Pearson International Airport (YYZ)";
 
   const subtitle = document.createElement("p");
   subtitle.className = "dashboard-subtitle";
