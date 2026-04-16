@@ -67,6 +67,13 @@ title: Project 3
     gap: 0.65rem;
   }
 
+  .section-subtitle {
+    margin: 0.1rem 0 0.15rem;
+    color: #111827;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
   .hr-card,
   .metric-card {
     border: 1px solid var(--border);
@@ -80,6 +87,21 @@ title: Project 3
     color: var(--muted);
     font-size: 0.8rem;
     font-weight: 600;
+  }
+
+  .hr-subtext {
+    margin-top: 0.45rem;
+    color: #6b7280;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    font-style: italic;
+  }
+
+  .coverage-status-main {
+    margin-top: 0.25rem;
+    color: #111827;
+    font-size: 2rem;
+    font-weight: 800;
   }
 
   .hr-value {
@@ -101,10 +123,10 @@ title: Project 3
     align-items: center;
     gap: 0.35rem;
     border-radius: 999px;
-    padding: 0.22rem 0.5rem;
+    padding: 0.30rem 3rem;
     background: rgba(145, 156, 0, 0.16);
     color: var(--primary);
-    font-size: 0.78rem;
+    font-size: 1.5rem;
     font-weight: 700;
   }
 
@@ -695,13 +717,33 @@ function buildUI() {
   topBar.appendChild(timeEl);
   topBar.appendChild(dateEl);
 
+  const hrSummaryTitle = document.createElement("h3");
+  hrSummaryTitle.className = "section-subtitle";
+  hrSummaryTitle.textContent = "HR Summary";
+
   const hrGrid = document.createElement("div");
   hrGrid.className = "hr-summary-grid";
   hrGrid.innerHTML = `
-    <div class="hr-card"><div class="hr-label">Staff Scheduled</div><div class="hr-value">31,000</div></div>
-    <div class="hr-card"><div class="hr-label">Standby</div><div class="hr-value">4,000</div></div>
-    <div class="hr-card"><div class="hr-label">Unplanned Absences</div><div class="hr-value">2,000</div></div>
-    <div class="hr-card"><div class="hr-label">Coverage Status</div><div class="hr-value"><span class="coverage-pill"><span class="olive-dot"></span>Tight</span></div></div>`;
+    <div class="hr-card">
+      <div class="hr-label">Staff Scheduled (Today)</div>
+      <div class="hr-value">31,000</div>
+      <div class="hr-subtext">Active workforce scheduled for today's operations</div>
+    </div>
+    <div class="hr-card">
+      <div class="hr-label">Standby / Available Staff</div>
+      <div class="hr-value">4,000</div>
+      <div class="hr-subtext">Additional staff available for overtime or call-in</div>
+    </div>
+    <div class="hr-card">
+      <div class="hr-label">Unplanned Absences</div>
+      <div class="hr-value">2,000</div>
+      <div class="hr-subtext">Unexpected absences impacting staffing capacity</div>
+    </div>
+    <div class="hr-card">
+      <div class="hr-label">Coverage Status</div>
+      <div class="coverage-status-main">⚠ Tight</div>
+      <div class="hr-subtext" style="font-style:normal; color:#1f2937;">Limited buffer during peak hours (08:00–11:00)</div>
+    </div>`;
 
   const summaryHead = document.createElement("div");
   summaryHead.className = "flight-summary-head";
@@ -794,7 +836,7 @@ function buildUI() {
   const arrList = createListPanel("Arrival List");
   listsWrap.append(depList.panel, arrList.panel);
 
-  wrapper.append(title, subtitle, topBar, hrGrid, summaryHead, summaryPanel, heatmapCard, listsWrap);
+  wrapper.append(title, subtitle, topBar, hrSummaryTitle, hrGrid, summaryHead, summaryPanel, heatmapCard, listsWrap);
 
   return {
     wrapper,
