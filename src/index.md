@@ -669,13 +669,7 @@ title: Project 3
 
 ```js
 const data = await FileAttachment("./data/flights.json").json();
-const dashboardLogoUrl = await (async () => {
-  try {
-    return await FileAttachment("./toronto-pearson-logo.png").url();
-  } catch {
-    return await FileAttachment("./favicon.svg").url();
-  }
-})();
+const dashboardLogoUrl = await FileAttachment("./favicon.svg").url();
 ```
 
 ```js
@@ -1218,9 +1212,6 @@ function buildUI() {
   logo.className = "dashboard-logo";
   logo.src = dashboardLogoUrl;
   logo.alt = "Toronto Pearson logo";
-  logo.addEventListener("error", async () => {
-    logo.src = await FileAttachment("./favicon.svg").url();
-  });
   logoWrap.appendChild(logo);
 
   titleWrap.append(title, subtitle);
