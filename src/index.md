@@ -449,14 +449,26 @@ function getAirlineName(flight) {
 }
 
 function normalizeFlightRecord(flight) {
+  const departureIata =
+    flight?.departure?.airport?.iata ||
+    flight?.departureIata ||
+    (flight?.type === "arrival" ? flight?.otherAirportCode : "YYZ") ||
+    "";
+
+  const arrivalIata =
+    flight?.arrival?.airport?.iata ||
+    flight?.arrivalIata ||
+    (flight?.type === "departure" ? flight?.otherAirportCode : "YYZ") ||
+    "";
+
   const depCountry =
     flight?.departure?.airport?.countryCode ||
     flight?.departureCountryCode ||
-    inferCountryFromIata(flight?.departureIata);
+    inferCountryFromIata(departureIata);
   const arrCountry =
     flight?.arrival?.airport?.countryCode ||
     flight?.arrivalCountryCode ||
-    inferCountryFromIata(flight?.arrivalIata);
+    inferCountryFromIata(arrivalIata);
   const airlineName = getAirlineName(flight);
 
   return {
@@ -465,13 +477,13 @@ function normalizeFlightRecord(flight) {
     airlineName,
     departure: {
       airport: {
-        iata: flight?.departure?.airport?.iata || flight?.departureIata || "",
+        iata: departureIata,
         countryCode: depCountry || null
       }
     },
     arrival: {
       airport: {
-        iata: flight?.arrival?.airport?.iata || flight?.arrivalIata || "",
+        iata: arrivalIata,
         countryCode: arrCountry || null
       }
     }
@@ -488,11 +500,11 @@ function filterFlightsByType(flights, type) {
       const strictDomestic = !!dep && !!arr && dep === arr;
 
       // Fallback for sparse API records:
-      // if origin is in Canada but destination country is missing,
+      // if one side is known Canada and the other side is missing,
       // keep these visible under Domestic instead of dropping all rows.
-      const originCanadaFallback = dep === "CA" && !arr;
+      const canadaKnownSideFallback = (dep === "CA" && !arr) || (arr === "CA" && !dep);
 
-      return strictDomestic || originCanadaFallback;
+      return strictDomestic || canadaKnownSideFallback;
     });
   }
 
