@@ -601,10 +601,16 @@ function normalizeFlightRecord(flight) {
 }
 
 function filterFlightsByType(flights, type) {
+  const normalizeCountryCode = (code) => {
+    if (!code || typeof code !== "string") return null;
+    const normalized = code.trim().toUpperCase();
+    return normalized || null;
+  };
+
   if (type === "domestic") {
     return flights.filter((flight) => {
-      const dep = flight.departure?.airport?.countryCode;
-      const arr = flight.arrival?.airport?.countryCode;
+      const dep = normalizeCountryCode(flight.departure?.airport?.countryCode);
+      const arr = normalizeCountryCode(flight.arrival?.airport?.countryCode);
 
       // Only keep flights that are confirmed Canada -> Canada.
       // Any unknown origin/destination is excluded.
@@ -614,8 +620,8 @@ function filterFlightsByType(flights, type) {
 
   if (type === "international") {
     return flights.filter((flight) => {
-      const dep = flight.departure?.airport?.countryCode;
-      const arr = flight.arrival?.airport?.countryCode;
+      const dep = normalizeCountryCode(flight.departure?.airport?.countryCode);
+      const arr = normalizeCountryCode(flight.arrival?.airport?.countryCode);
       // Exclude unknown origin/destination.
       if (!dep || !arr) return false;
       return dep !== arr;
