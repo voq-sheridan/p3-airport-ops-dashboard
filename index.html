@@ -19,7 +19,7 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.67be4bb5.json","lastModified":1776373050183,"size":1332723});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.f7c7ee23.json","lastModified":1776373401130,"size":1332949});
 
 define({id: "74213a70", inputs: ["FileAttachment"], outputs: ["data"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
@@ -1849,13 +1849,18 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
   .staff-insight-badge {
     display: inline-block;
     margin-top: 0.3rem;
-    padding: 0.15rem 0.45rem;
+    padding: 0.19rem 0.56rem;
     border-radius: 999px;
-    font-size: 0.75rem;
+    font-size: 0.94rem;
     font-weight: 700;
     color: #051F48;
-    background: rgba(145, 156, 0, 0.16);
   }
+
+  .staff-insight-badge.level-quiet { background: #dcfce7; }
+  .staff-insight-badge.level-low { background: #f5efe0; }
+  .staff-insight-badge.level-moderate { background: #fde6c8; }
+  .staff-insight-badge.level-busy { background: #f9c784; }
+  .staff-insight-badge.level-peak { background: #fca5a5; }
 
   .advisory-subline {
     margin-top: 0.25rem;
@@ -2038,7 +2043,7 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
 <div class="observablehq observablehq--block"><!--:f2282f0d:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T20:56:49">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T21:02:38">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
