@@ -43,6 +43,15 @@ title: Project 3
     flex: 1;
   }
 
+  .dashboard-logo {
+    display: block;
+    max-height: 72px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    margin-left: auto;
+  }
+
   .dashboard-subtitle {
     margin: 0.2rem 0 0;
     color: #2f3a4b;
@@ -650,6 +659,8 @@ title: Project 3
 
 ```js
 const data = await FileAttachment("./data/flights.json").json();
+const dashboardLogoUrl = await FileAttachment("./toronto-pearson-airport-logo.png").url();
+const dashboardLogoFallbackUrl = await FileAttachment("./favicon.svg").url();
 ```
 
 ```js
@@ -1186,8 +1197,16 @@ async function buildUI() {
   subtitle.className = "dashboard-subtitle";
   subtitle.textContent = "Operations-focused view for staffing and demand planning, powered by AeroDataBox flight snapshots.";
 
+  const logo = document.createElement("img");
+  logo.className = "dashboard-logo";
+  logo.src = dashboardLogoUrl;
+  logo.addEventListener("error", () => {
+    logo.src = dashboardLogoFallbackUrl;
+  }, { once: true });
+  logo.alt = "Toronto Pearson logo";
+
   titleWrap.append(title, subtitle);
-  header.append(titleWrap);
+  header.append(titleWrap, logo);
 
   const topBar = document.createElement("div");
   topBar.className = "top-status-bar";
