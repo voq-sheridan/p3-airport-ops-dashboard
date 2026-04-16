@@ -606,15 +606,9 @@ function filterFlightsByType(flights, type) {
       const dep = flight.departure?.airport?.countryCode;
       const arr = flight.arrival?.airport?.countryCode;
 
-      // Primary rule: same-country flights are domestic.
-      const strictDomestic = !!dep && !!arr && dep === arr;
-
-      // Fallback for sparse API records:
-      // if one side is known Canada and the other side is missing,
-      // keep these visible under Domestic instead of dropping all rows.
-      const canadaKnownSideFallback = (dep === "CA" && !arr) || (arr === "CA" && !dep);
-
-      return strictDomestic || canadaKnownSideFallback;
+      // Only keep flights that are confirmed Canada -> Canada.
+      // Any unknown origin/destination is excluded.
+      return dep === "CA" && arr === "CA";
     });
   }
 
@@ -622,6 +616,7 @@ function filterFlightsByType(flights, type) {
     return flights.filter((flight) => {
       const dep = flight.departure?.airport?.countryCode;
       const arr = flight.arrival?.airport?.countryCode;
+      // Exclude unknown origin/destination.
       if (!dep || !arr) return false;
       return dep !== arr;
     });
