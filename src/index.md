@@ -417,6 +417,7 @@ title: Project 3
 
   .staff-insight-box {
     margin-top: 0.45rem;
+    margin-bottom: 0.65rem;
     border: 1px solid var(--border);
     border-radius: 10px;
     background: #fbfcfe;
