@@ -19,14 +19,14 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.87468a61.json","lastModified":1776313764556,"size":1309343});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.57e8ecf1.json","lastModified":1776314062944,"size":1309214});
 
 define({id: "74213a70", inputs: ["FileAttachment"], outputs: ["data"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
 return {data};
 }});
 
-define({id: "cc2b632c", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getAdvisoryMessage","createMetricCard","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedCell","depHeatmapCache","arrHeatmapCache","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","periodLabel","renderSummaryCards","renderFlightListTable","renderFlightLists","renderForSelection","updateToggleButtons","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
+define({id: "d58a50cd", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getAdvisoryMessage","createMetricCard","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedCell","depHeatmapCache","arrHeatmapCache","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","periodLabel","renderSummaryCards","renderFlightListTable","renderFlightLists","renderForSelection","updateToggleButtons","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
 let d3;
 try {
   d3 = await import("./_npm/d3@7.9.0/66d82917.js");
@@ -110,14 +110,26 @@ function getAirlineName(flight) {
 }
 
 function normalizeFlightRecord(flight) {
+  const departureIata =
+    flight?.departure?.airport?.iata ||
+    flight?.departureIata ||
+    (flight?.type === "arrival" ? flight?.otherAirportCode : "YYZ") ||
+    "";
+
+  const arrivalIata =
+    flight?.arrival?.airport?.iata ||
+    flight?.arrivalIata ||
+    (flight?.type === "departure" ? flight?.otherAirportCode : "YYZ") ||
+    "";
+
   const depCountry =
     flight?.departure?.airport?.countryCode ||
     flight?.departureCountryCode ||
-    inferCountryFromIata(flight?.departureIata);
+    inferCountryFromIata(departureIata);
   const arrCountry =
     flight?.arrival?.airport?.countryCode ||
     flight?.arrivalCountryCode ||
-    inferCountryFromIata(flight?.arrivalIata);
+    inferCountryFromIata(arrivalIata);
   const airlineName = getAirlineName(flight);
 
   return {
@@ -126,13 +138,13 @@ function normalizeFlightRecord(flight) {
     airlineName,
     departure: {
       airport: {
-        iata: flight?.departure?.airport?.iata || flight?.departureIata || "",
+        iata: departureIata,
         countryCode: depCountry || null
       }
     },
     arrival: {
       airport: {
-        iata: flight?.arrival?.airport?.iata || flight?.arrivalIata || "",
+        iata: arrivalIata,
         countryCode: arrCountry || null
       }
     }
@@ -149,11 +161,11 @@ function filterFlightsByType(flights, type) {
       const strictDomestic = !!dep && !!arr && dep === arr;
 
       // Fallback for sparse API records:
-      // if origin is in Canada but destination country is missing,
+      // if one side is known Canada and the other side is missing,
       // keep these visible under Domestic instead of dropping all rows.
-      const originCanadaFallback = dep === "CA" && !arr;
+      const canadaKnownSideFallback = (dep === "CA" && !arr) || (arr === "CA" && !dep);
 
-      return strictDomestic || originCanadaFallback;
+      return strictDomestic || canadaKnownSideFallback;
     });
   }
 
@@ -1255,10 +1267,10 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
   }
 </style>
 <div class="observablehq observablehq--block"><!--:74213a70:--></div>
-<div class="observablehq observablehq--block"><!--:cc2b632c:--></div>
+<div class="observablehq observablehq--block"><!--:d58a50cd:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T04:28:55">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T04:33:43">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
