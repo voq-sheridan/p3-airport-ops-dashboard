@@ -82,7 +82,13 @@ title: Project 3
     font-weight: 600;
   }
 
-  .hr-value,
+  .hr-value {
+    color: var(--primary);
+    font-size: 2rem;
+    font-weight: 800;
+    margin-top: 0.25rem;
+  }
+
   .metric-num {
     color: var(--primary);
     font-size: 1.25rem;
