@@ -19,14 +19,14 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.21f588b7.json","lastModified":1776372119563,"size":1331931});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.75c525e9.json","lastModified":1776372229157,"size":1331545});
 
 define({id: "74213a70", inputs: ["FileAttachment"], outputs: ["data"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
 return {data};
 }});
 
-define({id: "197b33c7", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","getDateLabel","isWithinTimeRange","filterFlightsByDateAndTime","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","getDelayMinutes","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getStaffingRecommendation","getDemandBadgeClass","getDepartmentImpact","createMetricCard","createOperationalInsightsCarouselCard","staffingScenarios","formatInt","getCoverageIndicatorClass","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedScenario","selectedCell","depHeatmapCache","arrHeatmapCache","renderHrSummary","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","renderSummaryCards","renderFlightListTable","updateDateFilterOptions","renderFlightLists","renderForSelection","updateToggleButtons","handleListFilterChange","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
+define({id: "f747ee1a", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","getDateLabel","isWithinTimeRange","filterFlightsByDateAndTime","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","getDelayMinutes","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getStaffingRecommendation","getDemandBadgeClass","getDepartmentImpact","createMetricCard","createOperationalInsightsCarouselCard","staffingScenarios","formatInt","getCoverageIndicatorClass","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedScenario","selectedCell","depHeatmapCache","arrHeatmapCache","renderHrSummary","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","renderSummaryCards","renderFlightListTable","updateDateFilterOptions","renderFlightLists","renderForSelection","updateToggleButtons","handleListFilterChange","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
 let d3;
 try {
   d3 = await import("./_npm/d3@7.9.0/66d82917.js");
@@ -335,7 +335,7 @@ function heatmapColor(total) {
 
 function updateHeatmapLegendFromBands(legendEl, bands) {
   legendEl.innerHTML = `
-    <span class="heatmap-legend-title">Flight Volume (Quiet → Peak)</span>
+    <span class="heatmap-legend-title">Flight Volume per Hour (Quiet → Peak)</span>
     <span class="heatmap-legend-item"><span class="heatmap-swatch" style="background:#f5f5f5"></span><span class="heatmap-legend-name">Quiet</span><span class="heatmap-legend-range">0</span></span>
     <span class="heatmap-legend-item"><span class="heatmap-swatch" style="background:#fee5d9"></span><span class="heatmap-legend-name">Low</span><span class="heatmap-legend-range">1–${bands.lowMax}</span></span>
     <span class="heatmap-legend-item"><span class="heatmap-swatch" style="background:#fcae91"></span><span class="heatmap-legend-name">Moderate</span><span class="heatmap-legend-range">${bands.moderateMin}–${bands.moderateMax}</span></span>
@@ -2034,10 +2034,10 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
   }
 </style>
 <div class="observablehq observablehq--block"><!--:74213a70:--></div>
-<div class="observablehq observablehq--block"><!--:197b33c7:--></div>
+<div class="observablehq observablehq--block"><!--:f747ee1a:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T20:41:28">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T20:43:08">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
