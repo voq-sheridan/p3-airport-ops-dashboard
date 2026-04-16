@@ -19,14 +19,14 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.597c3e89.json","lastModified":1776354716304,"size":1329532});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.959fe87c.json","lastModified":1776354957925,"size":1329302});
 
 define({id: "74213a70", inputs: ["FileAttachment"], outputs: ["data"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
 return {data};
 }});
 
-define({id: "6911b3f8", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getAdvisoryMessage","createMetricCard","staffingScenarios","formatInt","getCoverageIndicatorClass","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedScenario","selectedCell","depHeatmapCache","arrHeatmapCache","renderHrSummary","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","renderSummaryCards","renderFlightListTable","renderFlightLists","renderForSelection","updateToggleButtons","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
+define({id: "6deca015", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getAdvisoryMessage","createMetricCard","staffingScenarios","formatInt","getCoverageIndicatorClass","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedScenario","selectedCell","depHeatmapCache","arrHeatmapCache","renderHrSummary","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","renderSummaryCards","renderFlightListTable","renderFlightLists","renderForSelection","updateToggleButtons","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
 let d3;
 try {
   d3 = await import("./_npm/d3@7.9.0/66d82917.js");
@@ -321,7 +321,11 @@ function createMetricCard(label) {
   l.textContent = label;
   card.appendChild(n);
   card.appendChild(l);
-  return { card, set: (v) => (n.textContent = v) };
+  return {
+    card,
+    set: (v) => (n.textContent = v),
+    setHtml: (v) => (n.innerHTML = v)
+  };
 }
 
 const staffingScenarios = {
@@ -803,7 +807,7 @@ function renderSummaryCards(filteredFlights) {
     : [];
 
   const peakHourLabel = maxFlights > 0
-    ? `${formatHourLabel(peakHourIndex)}–${formatHourLabel((peakHourIndex + 1) % 24)} (${maxFlights})`
+    ? `${formatHourLabel(peakHourIndex)}–${formatHourLabel((peakHourIndex + 1) % 24)} <span class="metric-inline-note">(${maxFlights} flights)</span>`
     : "—";
 
   const busiestPeriodLabel = peakHours.length
@@ -814,7 +818,7 @@ function renderSummaryCards(filteredFlights) {
   const departures = flightsToday.filter((f) => isYYZDeparture(f)).length;
 
   ui.metrics.total.set(String(flightsToday.length));
-  ui.metrics.peak.set(peakHourLabel);
+  ui.metrics.peak.setHtml(peakHourLabel);
   ui.metrics.split.set(`${arrivals} : ${departures}`);
   ui.metrics.busiest.set(busiestPeriodLabel);
 }
@@ -1188,6 +1192,12 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
     margin-top: 0.25rem;
   }
 
+  .metric-inline-note {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
   .coverage-pill {
     display: inline-flex;
     align-items: center;
@@ -1476,10 +1486,10 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
   }
 </style>
 <div class="observablehq observablehq--block"><!--:74213a70:--></div>
-<div class="observablehq observablehq--block"><!--:6911b3f8:--></div>
+<div class="observablehq observablehq--block"><!--:6deca015:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T15:51:26">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T15:55:26">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
