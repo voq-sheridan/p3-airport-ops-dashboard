@@ -671,6 +671,19 @@ title: Project 3
 const data = await FileAttachment("./data/flights.json").json();
 const dashboardLogoFallbackUrl = await FileAttachment("./favicon.svg").url();
 const torontoPearsonLogoPath = "./toronto-pearson-logo.png";
+
+async function resolveDashboardLogoUrl() {
+  try {
+    const headResp = await fetch(torontoPearsonLogoPath, {
+      method: "HEAD",
+      cache: "no-store"
+    });
+    if (headResp.ok) return `${torontoPearsonLogoPath}?_=${Date.now()}`;
+  } catch {
+    // Ignore and fall back to default logo.
+  }
+  return dashboardLogoFallbackUrl;
+}
 ```
 
 ```js
@@ -1189,7 +1202,7 @@ function getCoverageIndicatorClass(status) {
   return "tight";
 }
 
-function buildUI() {
+async function buildUI() {
   const wrapper = document.createElement("section");
   wrapper.className = "dashboard-shell";
 
@@ -1211,12 +1224,7 @@ function buildUI() {
   logoWrap.className = "dashboard-logo-wrap";
   const logo = document.createElement("img");
   logo.className = "dashboard-logo";
-  logo.src = torontoPearsonLogoPath;
-  logo.addEventListener("error", () => {
-    if (logo.src !== dashboardLogoFallbackUrl) {
-      logo.src = dashboardLogoFallbackUrl;
-    }
-  }, { once: true });
+  logo.src = await resolveDashboardLogoUrl();
   logo.alt = "Toronto Pearson logo";
   logoWrap.appendChild(logo);
 
@@ -1438,7 +1446,7 @@ function buildUI() {
   };
 }
 
-const ui = buildUI();
+const ui = await buildUI();
 display(ui.wrapper);
 
 let allFlights = [];
