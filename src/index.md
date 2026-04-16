@@ -293,27 +293,25 @@ title: Project 3
   }
 
   .toggle-group {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(180px, 1fr));
-    gap: 0.8rem;
-    width: 100%;
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    overflow: hidden;
   }
 
   .toggle-btn {
-    border: 2px solid #7a7a7a;
-    border-radius: 9px;
+    border: 0;
     background: #fff;
-    color: #374151;
-    padding: 0.7rem 1rem;
-    font-size: 0.95rem;
-    font-weight: 600;
+    color: var(--primary);
+    padding: 0.45rem 0.8rem;
+    font-size: 0.82rem;
+    font-weight: 700;
     cursor: pointer;
   }
 
   .toggle-btn.active {
-    background: #fff;
-    color: #111827;
-    border-color: var(--primary);
+    background: var(--primary);
+    color: #fff;
   }
 
   .heatmap-card {
