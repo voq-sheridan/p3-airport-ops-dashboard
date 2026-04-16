@@ -498,6 +498,7 @@ function buildUI() {
     .append('svg')
     .attr('class', 'heatmap-svg');
 
+
   // Heatmap legend (flight-count thresholds)
   const heatmapLegend = document.createElement('div');
   heatmapLegend.className = 'heatmap-legend';
@@ -1746,3 +1747,4 @@ listsWrap.appendChild(
 
 display(listsWrap);
 ```
+
