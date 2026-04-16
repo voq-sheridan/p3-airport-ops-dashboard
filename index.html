@@ -19,14 +19,14 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.39710f5a.json","lastModified":1776306228978,"size":174});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.540b912c.json","lastModified":1776307400187,"size":174});
 
 define({id: "74213a70", inputs: ["FileAttachment"], outputs: ["data"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
 return {data};
 }});
 
-define({id: "4e4612a8", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","buildUI","createMetricCard","wrapper","summaryPanel","snapshotTotals","departureInsightBox","arrivalInsightBox","metrics","chartCard","dateHeading","depHeatmapSvg","depHeatmapContainer","arrHeatmapSvg","arrHeatmapContainer","heatmapLegend","tooltip","torontoDateKey","torontoHour","hourLabelFromIndex","torontoHourMinute","torontoMinutesNow","formatClock12","formatClockFromMinutes","LOW_DEMAND_MAX_FLIGHTS","HIGH_DEMAND_MIN_FLIGHTS","getPeakHourForToday","applyInsightState","renderDepartureInsightBox","renderArrivalInsightBox","buildBinsForDate","buildHeatmapBands","currentHeatmapBands","updateHeatmapLegendFromBands","heatmapColor","parseDateKey","shiftDateKey","getHeatmapDateKeys","isYYZDeparture","isYYZArrival","buildDirectionalHeatmapData","drawDirectionalHeatmap","pillClass","rowClass","statusLabel","allFlights","fetchedAt","lastFetchedAtIso","loadedDates","dataWarnings","availableDateKeys","currentDateKey","metaRow","metaBaseSpan","countdownSpan","REFRESH_MS","nextRefreshAt","isPageActive","recomputeDateOptions","ensureMetaRow","updateMeta","updateCountdown","countdownTimer","updateDateHeadingClock","dateHeadingTimer","updateSnapshotTotals","renderForSelection","applyNewData","fetchLatestFlightsData","runRefreshCycle","refreshTimer","onVisibilityChangeHandler","beforeUnloadHandler","onScrollHandler","backToTopBtn","onUnhandledRejectionHandler"], body: async (display,data,FileAttachment,invalidation) => {
+define({id: "211f7dd8", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","buildUI","createMetricCard","wrapper","summaryPanel","snapshotTotals","departureInsightBox","arrivalInsightBox","metrics","chartCard","dateHeading","depHeatmapSvg","depHeatmapContainer","arrHeatmapSvg","arrHeatmapContainer","heatmapLegend","tooltip","torontoDateKey","torontoHour","hourLabelFromIndex","torontoHourMinute","torontoMinutesNow","formatClock12","formatClockFromMinutes","LOW_DEMAND_MAX_FLIGHTS","HIGH_DEMAND_MIN_FLIGHTS","getPeakHourForToday","applyInsightState","renderDepartureInsightBox","renderArrivalInsightBox","buildBinsForDate","buildHeatmapBands","currentHeatmapBands","updateHeatmapLegendFromBands","heatmapColor","parseDateKey","shiftDateKey","getHeatmapDateKeys","isYYZDeparture","isYYZArrival","buildDirectionalHeatmapData","drawDirectionalHeatmap","pillClass","rowClass","statusLabel","allFlights","fetchedAt","lastFetchedAtIso","loadedDates","dataWarnings","availableDateKeys","currentDateKey","metaRow","metaBaseSpan","countdownSpan","REFRESH_MS","nextRefreshAt","isPageActive","recomputeDateOptions","ensureMetaRow","updateMeta","updateCountdown","countdownTimer","updateDateHeadingClock","dateHeadingTimer","updateSnapshotTotals","renderForSelection","applyNewData","fetchLatestFlightsData","runRefreshCycle","refreshTimer","onVisibilityChangeHandler","beforeUnloadHandler","onScrollHandler","backToTopBtn","onUnhandledRejectionHandler"], body: async (display,data,FileAttachment,invalidation) => {
 // Render live summary, busyness chart and auto-refresh (1 hour)
 // Use Observable Framework's npm import syntax so D3 is bundled correctly.
 let d3;
@@ -115,6 +115,7 @@ function buildUI() {
     .select(arrHeatmapContainer)
     .append('svg')
     .attr('class', 'heatmap-svg');
+
 
   // Heatmap legend (flight-count thresholds)
   const heatmapLegend = document.createElement('div');
@@ -1777,12 +1778,12 @@ Data sourced from AeroDataBox via RapidAPI.</p>
   }
 </style>
 <div class="observablehq observablehq--block"><!--:74213a70:--></div>
-<div class="observablehq observablehq--block"><!--:4e4612a8:--></div>
+<div class="observablehq observablehq--block"><!--:211f7dd8:--></div>
 <div class="observablehq observablehq--block"><!--:89e04ded:--></div>
 <div class="observablehq observablehq--block"><!--:007afbce:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T02:23:45">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T02:43:15">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
