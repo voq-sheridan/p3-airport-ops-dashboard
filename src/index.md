@@ -933,7 +933,7 @@ function heatmapColor(total) {
 
 function updateHeatmapLegendFromBands(legendEl, bands) {
   legendEl.innerHTML = `
-    <span class="heatmap-legend-title">Flight Volume (Quiet → Peak)</span>
+    <span class="heatmap-legend-title">Flight Volume per Hour (Quiet → Peak)</span>
     <span class="heatmap-legend-item"><span class="heatmap-swatch" style="background:#f5f5f5"></span><span class="heatmap-legend-name">Quiet</span><span class="heatmap-legend-range">0</span></span>
     <span class="heatmap-legend-item"><span class="heatmap-swatch" style="background:#fee5d9"></span><span class="heatmap-legend-name">Low</span><span class="heatmap-legend-range">1–${bands.lowMax}</span></span>
     <span class="heatmap-legend-item"><span class="heatmap-swatch" style="background:#fcae91"></span><span class="heatmap-legend-name">Moderate</span><span class="heatmap-legend-range">${bands.moderateMin}–${bands.moderateMax}</span></span>
