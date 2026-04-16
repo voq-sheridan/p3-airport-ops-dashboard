@@ -19,14 +19,14 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.a1956dbb.json","lastModified":1776344732967,"size":1329080});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.f0c94493.json","lastModified":1776351174965,"size":1329304});
 
 define({id: "74213a70", inputs: ["FileAttachment"], outputs: ["data"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
 return {data};
 }});
 
-define({id: "4f8e51ee", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getAdvisoryMessage","createMetricCard","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedCell","depHeatmapCache","arrHeatmapCache","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","periodLabel","renderSummaryCards","renderFlightListTable","renderFlightLists","renderForSelection","updateToggleButtons","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
+define({id: "08673d7d", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getAdvisoryMessage","createMetricCard","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedCell","depHeatmapCache","arrHeatmapCache","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","periodLabel","renderSummaryCards","renderFlightListTable","renderFlightLists","renderForSelection","updateToggleButtons","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
 let d3;
 try {
   d3 = await import("./_npm/d3@7.9.0/66d82917.js");
@@ -342,13 +342,33 @@ function buildUI() {
   topBar.appendChild(timeEl);
   topBar.appendChild(dateEl);
 
+  const hrSummaryTitle = document.createElement("h3");
+  hrSummaryTitle.className = "section-subtitle";
+  hrSummaryTitle.textContent = "HR Summary";
+
   const hrGrid = document.createElement("div");
   hrGrid.className = "hr-summary-grid";
   hrGrid.innerHTML = `
-    <div class="hr-card"><div class="hr-label">Staff Scheduled</div><div class="hr-value">31,000</div></div>
-    <div class="hr-card"><div class="hr-label">Standby</div><div class="hr-value">4,000</div></div>
-    <div class="hr-card"><div class="hr-label">Unplanned Absences</div><div class="hr-value">2,000</div></div>
-    <div class="hr-card"><div class="hr-label">Coverage Status</div><div class="hr-value"><span class="coverage-pill"><span class="olive-dot"></span>Tight</span></div></div>`;
+    <div class="hr-card">
+      <div class="hr-label">Staff Scheduled (Today)</div>
+      <div class="hr-value">31,000</div>
+      <div class="hr-subtext">Active workforce scheduled for today's operations</div>
+    </div>
+    <div class="hr-card">
+      <div class="hr-label">Standby / Available Staff</div>
+      <div class="hr-value">4,000</div>
+      <div class="hr-subtext">Additional staff available for overtime or call-in</div>
+    </div>
+    <div class="hr-card">
+      <div class="hr-label">Unplanned Absences</div>
+      <div class="hr-value">2,000</div>
+      <div class="hr-subtext">Unexpected absences impacting staffing capacity</div>
+    </div>
+    <div class="hr-card">
+      <div class="hr-label">Coverage Status</div>
+      <div class="coverage-status-main">⚠ Tight</div>
+      <div class="hr-subtext" style="font-style:normal; color:#1f2937;">Limited buffer during peak hours (08:00–11:00)</div>
+    </div>`;
 
   const summaryHead = document.createElement("div");
   summaryHead.className = "flight-summary-head";
@@ -441,7 +461,7 @@ function buildUI() {
   const arrList = createListPanel("Arrival List");
   listsWrap.append(depList.panel, arrList.panel);
 
-  wrapper.append(title, subtitle, topBar, hrGrid, summaryHead, summaryPanel, heatmapCard, listsWrap);
+  wrapper.append(title, subtitle, topBar, hrSummaryTitle, hrGrid, summaryHead, summaryPanel, heatmapCard, listsWrap);
 
   return {
     wrapper,
@@ -979,6 +999,13 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
     gap: 0.65rem;
   }
 
+  .section-subtitle {
+    margin: 0.1rem 0 0.15rem;
+    color: #111827;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
   .hr-card,
   .metric-card {
     border: 1px solid var(--border);
@@ -992,6 +1019,21 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
     color: var(--muted);
     font-size: 0.8rem;
     font-weight: 600;
+  }
+
+  .hr-subtext {
+    margin-top: 0.45rem;
+    color: #6b7280;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    font-style: italic;
+  }
+
+  .coverage-status-main {
+    margin-top: 0.25rem;
+    color: #111827;
+    font-size: 2rem;
+    font-weight: 800;
   }
 
   .hr-value {
@@ -1013,10 +1055,10 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
     align-items: center;
     gap: 0.35rem;
     border-radius: 999px;
-    padding: 0.22rem 0.5rem;
+    padding: 0.30rem 3rem;
     background: rgba(145, 156, 0, 0.16);
     color: var(--primary);
-    font-size: 0.78rem;
+    font-size: 1.5rem;
     font-weight: 700;
   }
 
@@ -1287,10 +1329,10 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
   }
 </style>
 <div class="observablehq observablehq--block"><!--:74213a70:--></div>
-<div class="observablehq observablehq--block"><!--:4f8e51ee:--></div>
+<div class="observablehq observablehq--block"><!--:08673d7d:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T13:04:49">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T14:52:14">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
