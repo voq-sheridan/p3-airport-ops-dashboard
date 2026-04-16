@@ -186,7 +186,7 @@ title: Project 3
   .insights-carousel {
     display: grid;
     grid-template-rows: auto 1fr auto;
-    gap: 0.28rem;
+    gap: 0.22rem;
     min-height: 104px;
   }
 
@@ -200,52 +200,30 @@ title: Project 3
   .insights-body {
     transition: opacity 240ms ease;
     opacity: 1;
+    display: flex;
+    align-items: center;
+    min-height: 48px;
   }
 
   .insights-body.fading {
     opacity: 0;
   }
 
-  .insights-metric {
+  .insights-line {
     color: var(--primary);
-    font-size: 1.08rem;
-    font-weight: 800;
-    line-height: 1.2;
-  }
-
-  .insights-arrow {
-    color: var(--accent);
-    margin-left: 0.2rem;
-    font-weight: 900;
-  }
-
-  .insights-support {
-    margin-top: 0.18rem;
-    color: var(--muted);
-    font-size: 0.74rem;
+    font-size: 0.92rem;
+    font-weight: 700;
     line-height: 1.3;
   }
 
-  .insights-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.45rem;
-    margin-top: 0.1rem;
+  .insights-value {
+    font-weight: 800;
   }
 
-  .insights-arrow-btn {
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    background: #fff;
-    color: var(--primary);
-    font-size: 0.76rem;
-    font-weight: 800;
-    width: 22px;
-    height: 22px;
-    line-height: 1;
-    cursor: pointer;
-  }
+  .insights-dots-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
   .insights-dots {
     display: inline-flex;
@@ -267,6 +245,14 @@ title: Project 3
   .insights-dot.active {
     color: var(--primary);
   }
+
+  .insights-value-peak { color: #b45309; }
+  .insights-value-delayed { color: #dc2626; }
+  .insights-value-demand-up { color: #d97706; }
+  .insights-value-demand-down { color: #16a34a; }
+  .insights-value-demand-flat { color: #64748b; }
+  .insights-value-route { color: var(--primary); }
+  .insights-value-carrier { color: #6b7280; }
 
   .coverage-pill {
     display: inline-flex;
@@ -1012,34 +998,20 @@ function createOperationalInsightsCarouselCard() {
   const bodyEl = document.createElement("div");
   bodyEl.className = "insights-body";
 
-  const nav = document.createElement("div");
-  nav.className = "insights-nav";
-
-  const leftBtn = document.createElement("button");
-  leftBtn.type = "button";
-  leftBtn.className = "insights-arrow-btn";
-  leftBtn.setAttribute("aria-label", "Previous insight");
-  leftBtn.textContent = "<";
-
   const dots = document.createElement("div");
   dots.className = "insights-dots";
 
-  const rightBtn = document.createElement("button");
-  rightBtn.type = "button";
-  rightBtn.className = "insights-arrow-btn";
-  rightBtn.setAttribute("aria-label", "Next insight");
-  rightBtn.textContent = ">";
+  const dotsWrap = document.createElement("div");
+  dotsWrap.className = "insights-dots-wrap";
+  dotsWrap.appendChild(dots);
 
-  nav.append(leftBtn, dots, rightBtn);
-  root.append(titleEl, bodyEl, nav);
+  root.append(titleEl, bodyEl, dotsWrap);
   card.appendChild(root);
 
-  const AUTO_ROTATE_MS = 60 * 1000;
-  const RESUME_DELAY_MS = 8000;
-  let slides = [];
-  let currentSlideIndex = 0;
+  const AUTO_ROTATE_MS = 30 * 1000;
+  let insights = [];
+  let currentInsightIndex = 0;
   let rotateTimer = null;
-  let resumeTimer = null;
   let isHovering = false;
 
   function stopAutoRotate() {
@@ -1051,88 +1023,61 @@ function createOperationalInsightsCarouselCard() {
 
   function queueNextAutoRotate(delayMs = AUTO_ROTATE_MS) {
     stopAutoRotate();
-    if (isHovering || slides.length <= 1) return;
+    if (isHovering || insights.length <= 1) return;
     rotateTimer = setTimeout(() => {
-      setSlide((currentSlideIndex + 1) % slides.length, true);
+      setInsight((currentInsightIndex + 1) % insights.length, true);
       queueNextAutoRotate(AUTO_ROTATE_MS);
     }, delayMs);
   }
 
-  function startAutoRotate() {
-    queueNextAutoRotate(AUTO_ROTATE_MS);
-  }
-
-  function scheduleResume() {
-    if (resumeTimer) clearTimeout(resumeTimer);
-    resumeTimer = setTimeout(() => {
-      if (!isHovering) queueNextAutoRotate(AUTO_ROTATE_MS);
-    }, RESUME_DELAY_MS);
-  }
-
   function renderDots() {
     dots.innerHTML = "";
-    slides.forEach((_, i) => {
+    insights.forEach((_, i) => {
       const dot = document.createElement("button");
       dot.type = "button";
-      dot.className = `insights-dot${i === currentSlideIndex ? " active" : ""}`;
+      dot.className = `insights-dot${i === currentInsightIndex ? " active" : ""}`;
       dot.setAttribute("aria-label", `Go to insight ${i + 1}`);
       dot.textContent = "●";
       dot.addEventListener("click", () => {
-        stopAutoRotate();
-        setSlide(i, true);
-        scheduleResume();
+        setInsight(i, true);
+        queueNextAutoRotate(AUTO_ROTATE_MS);
       });
       dots.appendChild(dot);
     });
   }
 
-  function renderSlide(slide) {
-    if (!slide) {
-      bodyEl.innerHTML = '<div class="insights-metric">—</div><div class="insights-support">No insight available.</div>';
+  function renderInsight(insight) {
+    if (!insight) {
+      bodyEl.innerHTML = '<div class="insights-line">No operational insight available.</div>';
       return;
     }
 
-    const arrowMarkup = slide.arrow ? `<span class="insights-arrow">${slide.arrow}</span>` : "";
     bodyEl.innerHTML = `
-      <div class="insights-title">${slide.title}</div>
-      <div class="insights-metric">${slide.metric}${arrowMarkup}</div>
-      <div class="insights-support">${slide.support}</div>`;
+      <div class="insights-line">${insight.label}: <span class="insights-value ${insight.valueClass || ""}">${insight.value}</span></div>`;
   }
 
-  function setSlide(nextIndex, withFade = true) {
-    if (!slides.length) {
-      renderSlide(null);
+  function setInsight(nextIndex, withFade = true) {
+    if (!insights.length) {
+      renderInsight(null);
       renderDots();
       return;
     }
 
-    currentSlideIndex = ((nextIndex % slides.length) + slides.length) % slides.length;
+    currentInsightIndex = ((nextIndex % insights.length) + insights.length) % insights.length;
 
     if (!withFade) {
-      renderSlide(slides[currentSlideIndex]);
+      renderInsight(insights[currentInsightIndex]);
       renderDots();
       return;
     }
 
     bodyEl.classList.add("fading");
     setTimeout(() => {
-      renderSlide(slides[currentSlideIndex]);
+      renderInsight(insights[currentInsightIndex]);
       renderDots();
       bodyEl.classList.remove("fading");
     }, 140);
   }
-
-  leftBtn.addEventListener("click", () => {
-    stopAutoRotate();
-    setSlide(currentSlideIndex - 1, true);
-    scheduleResume();
-  });
-
-  rightBtn.addEventListener("click", () => {
-    stopAutoRotate();
-    setSlide(currentSlideIndex + 1, true);
-    scheduleResume();
-  });
 
   card.addEventListener("mouseenter", () => {
     isHovering = true;
@@ -1146,18 +1091,14 @@ function createOperationalInsightsCarouselCard() {
 
   return {
     card,
-    setSlides(nextSlides) {
-      slides = Array.isArray(nextSlides) ? nextSlides.slice(0, 4) : [];
-      if (currentSlideIndex >= slides.length) currentSlideIndex = 0;
-      setSlide(currentSlideIndex, false);
+    setInsights(nextInsights) {
+      insights = Array.isArray(nextInsights) ? nextInsights.slice(0, 6) : [];
+      currentInsightIndex = 0;
+      setInsight(currentInsightIndex, false);
       queueNextAutoRotate(AUTO_ROTATE_MS);
     },
     stop() {
       stopAutoRotate();
-      if (resumeTimer) {
-        clearTimeout(resumeTimer);
-        resumeTimer = null;
-      }
     }
   };
 }
@@ -1734,39 +1675,39 @@ function renderSummaryCards(filteredFlights) {
   const arrivals = flightsToday.filter((f) => isYYZArrival(f)).length;
   const departures = flightsToday.filter((f) => isYYZDeparture(f)).length;
 
-  const yesterdayKey = shiftDateKey(todayKey, -1);
-  const flightsYesterday = filteredFlights.filter((f) => {
-    const dt = toLocalDate(f.scheduledTime);
-    return dt && torontoDateKey(dt) === yesterdayKey;
-  });
-
   const DELAY_THRESHOLD = 15;
-  const calcOnTimeRate = (flights) => {
-    if (!flights.length) return 0;
-    const onTime = flights.filter((f) => getDelayMinutes(f) <= DELAY_THRESHOLD).length;
-    return Math.round((onTime / flights.length) * 100);
-  };
 
-  const onTimeToday = calcOnTimeRate(flightsToday);
-  const onTimeYesterday = calcOnTimeRate(flightsYesterday);
-  const onTimeDelta = onTimeToday - onTimeYesterday;
+  const delayedCount = flightsToday.filter((f) => getDelayMinutes(f) > DELAY_THRESHOLD).length;
 
-  const now = new Date();
-  const nowKey = torontoDateKey(now);
-  const nowHour = torontoHour(now);
-  const prevHour = nowHour === 0 ? 23 : nowHour - 1;
-  const prevKey = nowHour === 0 ? shiftDateKey(nowKey, -1) : nowKey;
+  const threshold = maxFlights * 0.9;
+  const peakHours = maxFlights > 0
+    ? hourly
+        .map((v, i) => ({ v, i }))
+        .filter((d) => d.v >= threshold)
+        .map((d) => d.i)
+    : [];
 
-  const delayedInSlot = (dateKey, hour) =>
-    filteredFlights.filter((f) => {
-      const dt = toLocalDate(f.scheduledTime);
-      if (!dt) return false;
-      return torontoDateKey(dt) === dateKey && torontoHour(dt) === hour && getDelayMinutes(f) > DELAY_THRESHOLD;
-    }).length;
+  const peakWindow = peakHours.length
+    ? `${formatHourLabel(Math.min(...peakHours))}–${formatHourLabel((Math.max(...peakHours) + 1) % 24)}`
+    : "—";
 
-  const delayedNow = delayedInSlot(nowKey, nowHour);
-  const delayedPrev = delayedInSlot(prevKey, prevHour);
-  const delayedDelta = delayedNow - delayedPrev;
+  const demandChange = maxFlights > 0
+    ? maxFlights - hourly[peakHourIndex === 0 ? 23 : peakHourIndex - 1]
+    : 0;
+
+  const departuresToday = flightsToday.filter((f) => isYYZDeparture(f));
+  const arrivalsToday = flightsToday.filter((f) => isYYZArrival(f));
+
+  const shouldUseDestination = departuresToday.length >= arrivalsToday.length;
+  const routeSource = shouldUseDestination ? departuresToday : arrivalsToday;
+  const routeLabel = shouldUseDestination ? "Top Destination" : "Top Origin";
+  const routeMap = new Map();
+  routeSource.forEach((f) => {
+    const key = f.otherAirport || f.otherAirportCode || "Unknown";
+    if (!key) return;
+    routeMap.set(key, (routeMap.get(key) || 0) + 1);
+  });
+  const [topRouteName, topRouteCount] = Array.from(routeMap.entries()).sort((a, b) => b[1] - a[1])[0] || ["Unknown", 0];
 
   const topAirline = aggregateAirlines(flightsToday)[0];
   const topAirlineName = topAirline?.[0] || "No dominant carrier";
@@ -1775,39 +1716,54 @@ function renderSummaryCards(filteredFlights) {
     ? Math.round((topAirlineCount / flightsToday.length) * 100)
     : 0;
 
-  const insightSlides = [
+  const insights = [
     {
-      id: "performance",
-      title: "On-Time Performance",
-      metric: `${onTimeToday}%`,
-      arrow: onTimeDelta >= 0 ? "↑" : "↓",
-      support: `${onTimeDelta >= 0 ? "+" : ""}${onTimeDelta}% vs yesterday`
+      id: "peak-window",
+      label: "Peak Window",
+      value: peakWindow,
+      valueClass: "insights-value-peak"
     },
     {
-      id: "delays",
-      title: "Delayed Flights",
-      metric: `${delayedNow}`,
-      arrow: delayedDelta > 0 ? "↑" : delayedDelta < 0 ? "↓" : "→",
-      support: `${delayedDelta >= 0 ? "+" : ""}${delayedDelta} vs previous hour`
+      id: "peak-load",
+      label: "Peak Load",
+      value: `${maxFlights} flights (${formatHourLabel(peakHourIndex)})`,
+      valueClass: "insights-value-peak"
     },
     {
-      id: "peak",
-      title: "Peak Load",
-      metric: `${maxFlights} flights/hour`,
-      support: "Highest demand intensity today"
+      id: "delayed",
+      label: "Delayed Flights",
+      value: `${delayedCount}`,
+      valueClass: "insights-value-delayed"
     },
     {
-      id: "airline",
-      title: "Top Airline",
-      metric: `${topAirlineName} (${topAirlineShare}%)`,
-      support: "Largest traffic share today"
+      id: "demand-change",
+      label: "Demand Change",
+      value: `${demandChange >= 0 ? "+" : ""}${demandChange} vs last hour`,
+      valueClass:
+        demandChange > 0
+          ? "insights-value-demand-up"
+          : demandChange < 0
+            ? "insights-value-demand-down"
+            : "insights-value-demand-flat"
+    },
+    {
+      id: "top-route",
+      label: routeLabel,
+      value: `${topRouteName} (${topRouteCount} flights)`,
+      valueClass: "insights-value-route"
+    },
+    {
+      id: "carrier",
+      label: "Top Carrier",
+      value: `${topAirlineName} (${topAirlineShare}%)`,
+      valueClass: "insights-value-carrier"
     }
   ];
 
   ui.metrics.total.set(String(flightsToday.length));
   ui.metrics.peak.setHtml(peakHourLabel);
   ui.metrics.split.set(`${arrivals} : ${departures}`);
-  ui.insightsCarousel.setSlides(insightSlides);
+  ui.insightsCarousel.setInsights(insights);
 }
 
 function renderFlightListTable(el, flights, typeBadge, locationHeader, emptyText) {
