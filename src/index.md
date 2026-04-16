@@ -293,25 +293,27 @@ title: Project 3
   }
 
   .toggle-group {
-    display: inline-flex;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    gap: 0.8rem;
+    width: 100%;
   }
 
   .toggle-btn {
-    border: 0;
+    border: 2px solid #7a7a7a;
+    border-radius: 9px;
     background: #fff;
-    color: var(--primary);
-    padding: 0.45rem 0.8rem;
-    font-size: 0.82rem;
-    font-weight: 700;
+    color: #374151;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
   }
 
   .toggle-btn.active {
-    background: var(--primary);
-    color: #fff;
+    background: #fff;
+    color: #111827;
+    border-color: var(--primary);
   }
 
   .heatmap-card {
@@ -342,22 +344,6 @@ title: Project 3
   .heatmap-cell-selected {
     stroke: var(--primary);
     stroke-width: 2;
-  }
-
-  .current-hour-highlight-under {
-    fill: none;
-    stroke: #ffffff;
-    stroke-width: 3.2;
-    opacity: 0.95;
-    pointer-events: none;
-  }
-
-  .current-hour-highlight {
-    fill: none;
-    stroke: #0ea5e9;
-    stroke-width: 2.2;
-    stroke-dasharray: 4 2;
-    pointer-events: none;
   }
 
   .heatmap-legend {
@@ -1560,20 +1546,15 @@ function drawDirectionalHeatmap(svg, container, heatmapData, mode, filteredFligh
     const x = margin.left + currentHour * (cellSize + gap);
     const y = margin.top + todayRowIndex * (cellSize + gap);
     g.append("rect")
-      .attr("class", "current-hour-highlight-under")
-      .attr("x", x - 3)
-      .attr("y", y - 3)
-      .attr("width", cellSize + 6)
-      .attr("height", cellSize + 6)
-      .attr("rx", 6);
-
-    g.append("rect")
-      .attr("class", "current-hour-highlight")
-      .attr("x", x - 3)
-      .attr("y", y - 3)
-      .attr("width", cellSize + 6)
-      .attr("height", cellSize + 6)
-      .attr("rx", 6);
+      .attr("x", x - 2)
+      .attr("y", y - 2)
+      .attr("width", cellSize + 4)
+      .attr("height", cellSize + 4)
+      .attr("rx", 5)
+      .attr("fill", "none")
+      .attr("stroke", "#60a5fa")
+      .attr("stroke-width", 1.2)
+      .attr("opacity", 0.85);
   }
 
   g.selectAll(".heatmap-total-bg")
