@@ -53,9 +53,14 @@ title: Project 3
   .dashboard-logo {
     display: block;
     max-height: 72px;
+    max-width: 240px;
     width: auto;
     height: auto;
     object-fit: contain;
+    background: #ffffff;
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+    padding: 0.25rem 0.4rem;
   }
 
   .dashboard-subtitle {
@@ -670,6 +675,7 @@ title: Project 3
 ```js
 const data = await FileAttachment("./data/flights.json").json();
 const dashboardLogoUrl = await FileAttachment("./toronto-pearson-airport-logo.png").url();
+const dashboardLogoFallbackUrl = await FileAttachment("./favicon.svg").url();
 ```
 
 ```js
@@ -1211,6 +1217,9 @@ async function buildUI() {
   const logo = document.createElement("img");
   logo.className = "dashboard-logo";
   logo.src = dashboardLogoUrl;
+  logo.addEventListener("error", () => {
+    logo.src = dashboardLogoFallbackUrl;
+  }, { once: true });
   logo.alt = "Toronto Pearson logo";
   logoWrap.appendChild(logo);
 
