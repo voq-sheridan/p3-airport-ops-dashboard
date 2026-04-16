@@ -361,6 +361,24 @@ title: Project 3
     z-index: 30;
   }
 
+  .detail-panel-close {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.4rem;
+    border: 0;
+    background: transparent;
+    color: #64748b;
+    font-size: 1rem;
+    line-height: 1;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0.1rem 0.25rem;
+  }
+
+  .detail-panel-close:hover {
+    color: var(--primary);
+  }
+
   .detail-panel.hidden { display: none; }
 
   .detail-time {
@@ -1067,11 +1085,22 @@ function renderDetailPanel(event, datum, mode, filteredFlights) {
     : '<div class="meta">No airlines in this slot.</div>';
 
   ui.detailPanel.innerHTML = `
+    <button type="button" class="detail-panel-close" aria-label="Close details">✕</button>
     <div class="detail-time">${formatHourLabel(datum.hour)}</div>
     <div><strong>${currentFlights.length}</strong> flights ${arrow}</div>
     <div class="detail-delta">${deltaText} vs previous hour</div>
     <div><strong>Airlines Operating</strong></div>
     ${airlineGrid}`;
+
+  const closeBtn = ui.detailPanel.querySelector(".detail-panel-close");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      selectedCell = null;
+      ui.detailPanel.classList.add("hidden");
+      renderForSelection();
+    });
+  }
 
   const cardRect = ui.heatmapCard.getBoundingClientRect();
   const x = Math.min(Math.max(event.clientX - cardRect.left + 12, 12), cardRect.width - 290);
