@@ -19,14 +19,14 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.351d1379.json","lastModified":1776358562988,"size":1329023});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.78de74a1.json","lastModified":1776358849126,"size":1329056});
 
 define({id: "74213a70", inputs: ["FileAttachment"], outputs: ["data"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
 return {data};
 }});
 
-define({id: "4098f712", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","getDateLabel","isWithinTimeRange","filterFlightsByDateAndTime","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","getDelayMinutes","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getStaffingRecommendation","getDemandBadgeClass","getDepartmentImpact","createMetricCard","createOperationalInsightsCarouselCard","staffingScenarios","formatInt","getCoverageIndicatorClass","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedScenario","selectedCell","depHeatmapCache","arrHeatmapCache","renderHrSummary","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","renderSummaryCards","renderFlightListTable","updateDateFilterOptions","renderFlightLists","renderForSelection","updateToggleButtons","handleListFilterChange","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
+define({id: "a56b57af", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","getDateLabel","isWithinTimeRange","filterFlightsByDateAndTime","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","getDelayMinutes","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getStaffingRecommendation","getDemandBadgeClass","getDepartmentImpact","createMetricCard","createOperationalInsightsCarouselCard","staffingScenarios","formatInt","getCoverageIndicatorClass","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedScenario","selectedCell","depHeatmapCache","arrHeatmapCache","renderHrSummary","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","renderSummaryCards","renderFlightListTable","updateDateFilterOptions","renderFlightLists","renderForSelection","updateToggleButtons","handleListFilterChange","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
 let d3;
 try {
   d3 = await import("./_npm/d3@7.9.0/66d82917.js");
@@ -435,23 +435,28 @@ function createOperationalInsightsCarouselCard() {
 
   function stopAutoRotate() {
     if (rotateTimer) {
-      clearInterval(rotateTimer);
+      clearTimeout(rotateTimer);
       rotateTimer = null;
     }
   }
 
-  function startAutoRotate() {
+  function queueNextAutoRotate(delayMs = AUTO_ROTATE_MS) {
     stopAutoRotate();
     if (isHovering || slides.length <= 1) return;
-    rotateTimer = setInterval(() => {
-      setSlide((currentSlideIndex + 1) % slides.length, false);
-    }, AUTO_ROTATE_MS);
+    rotateTimer = setTimeout(() => {
+      setSlide((currentSlideIndex + 1) % slides.length, true);
+      queueNextAutoRotate(AUTO_ROTATE_MS);
+    }, delayMs);
+  }
+
+  function startAutoRotate() {
+    queueNextAutoRotate(AUTO_ROTATE_MS);
   }
 
   function scheduleResume() {
     if (resumeTimer) clearTimeout(resumeTimer);
     resumeTimer = setTimeout(() => {
-      if (!isHovering) startAutoRotate();
+      if (!isHovering) queueNextAutoRotate(AUTO_ROTATE_MS);
     }, RESUME_DELAY_MS);
   }
 
@@ -527,7 +532,7 @@ function createOperationalInsightsCarouselCard() {
 
   card.addEventListener("mouseleave", () => {
     isHovering = false;
-    startAutoRotate();
+    queueNextAutoRotate(1200);
   });
 
   return {
@@ -536,7 +541,7 @@ function createOperationalInsightsCarouselCard() {
       slides = Array.isArray(nextSlides) ? nextSlides.slice(0, 4) : [];
       if (currentSlideIndex >= slides.length) currentSlideIndex = 0;
       setSlide(currentSlideIndex, false);
-      startAutoRotate();
+      queueNextAutoRotate(AUTO_ROTATE_MS);
     },
     stop() {
       stopAutoRotate();
@@ -2071,10 +2076,10 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
   }
 </style>
 <div class="observablehq observablehq--block"><!--:74213a70:--></div>
-<div class="observablehq observablehq--block"><!--:4098f712:--></div>
+<div class="observablehq observablehq--block"><!--:a56b57af:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T16:55:21">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T17:00:08">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
