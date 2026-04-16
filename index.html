@@ -19,14 +19,14 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.57e8ecf1.json","lastModified":1776314062944,"size":1309214});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.19ffe651.json","lastModified":1776314523960,"size":1309215});
 
 define({id: "74213a70", inputs: ["FileAttachment"], outputs: ["data"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
 return {data};
 }});
 
-define({id: "d58a50cd", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getAdvisoryMessage","createMetricCard","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedCell","depHeatmapCache","arrHeatmapCache","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","periodLabel","renderSummaryCards","renderFlightListTable","renderFlightLists","renderForSelection","updateToggleButtons","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
+define({id: "4f8e51ee", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getAdvisoryMessage","createMetricCard","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedCell","depHeatmapCache","arrHeatmapCache","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","periodLabel","renderSummaryCards","renderFlightListTable","renderFlightLists","renderForSelection","updateToggleButtons","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
 let d3;
 try {
   d3 = await import("./_npm/d3@7.9.0/66d82917.js");
@@ -331,6 +331,10 @@ function buildUI() {
   title.className = "dashboard-title";
   title.textContent = "Airport Performance Dashboard - Toronto Pearson International Airport (YYZ)";
 
+  const subtitle = document.createElement("p");
+  subtitle.className = "dashboard-subtitle";
+  subtitle.textContent = "Operations-focused view for staffing and demand planning, powered by AeroDataBox flight snapshots.";
+
   const topBar = document.createElement("div");
   topBar.className = "top-status-bar";
   const timeEl = document.createElement("div");
@@ -437,7 +441,7 @@ function buildUI() {
   const arrList = createListPanel("Arrival List");
   listsWrap.append(depList.panel, arrList.panel);
 
-  wrapper.append(title, topBar, hrGrid, summaryHead, summaryPanel, heatmapCard, listsWrap);
+  wrapper.append(title, subtitle, topBar, hrGrid, summaryHead, summaryPanel, heatmapCard, listsWrap);
 
   return {
     wrapper,
@@ -910,8 +914,6 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
 </nav>
 </aside>
 <main id="observablehq-main" class="observablehq">
-<h1 id="airport-performance-dashboard-toronto-pearson-international-airport-yyz" tabindex="-1"><a class="observablehq-header-anchor" href="#airport-performance-dashboard-toronto-pearson-international-airport-yyz">Airport Performance Dashboard - Toronto Pearson International Airport (YYZ)</a></h1>
-<p>Operations-focused view for staffing and demand planning, powered by AeroDataBox flight snapshots.</p>
 <style>
   :root {
     --primary: #051F48;
@@ -934,6 +936,12 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
     font-size: 2rem;
     line-height: 1.2;
     font-weight: 800;
+  }
+
+  .dashboard-subtitle {
+    margin: 0.2rem 0 0;
+    color: #2f3a4b;
+    font-size: 0.95rem;
   }
 
   .top-status-bar {
@@ -1267,10 +1275,10 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
   }
 </style>
 <div class="observablehq observablehq--block"><!--:74213a70:--></div>
-<div class="observablehq observablehq--block"><!--:d58a50cd:--></div>
+<div class="observablehq observablehq--block"><!--:4f8e51ee:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T04:33:43">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T04:41:22">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
