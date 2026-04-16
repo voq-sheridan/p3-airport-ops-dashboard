@@ -30,6 +30,34 @@ title: Project 3
     font-weight: 800;
   }
 
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-right: 0.2rem;
+  }
+
+  .dashboard-title-wrap {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .dashboard-logo-wrap {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-left: 0.6rem;
+  }
+
+  .dashboard-logo {
+    display: block;
+    max-height: 72px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
   .dashboard-subtitle {
     margin: 0.2rem 0 0;
     color: #2f3a4b;
@@ -623,6 +651,14 @@ title: Project 3
   }
 
   @media (max-width: 980px) {
+    .dashboard-header {
+      align-items: flex-start;
+    }
+
+    .dashboard-logo {
+      max-height: 58px;
+    }
+
     .hr-summary-grid,
     .summary-panel,
     .list-panels {
@@ -1155,6 +1191,12 @@ function buildUI() {
   const wrapper = document.createElement("section");
   wrapper.className = "dashboard-shell";
 
+  const header = document.createElement("div");
+  header.className = "dashboard-header";
+
+  const titleWrap = document.createElement("div");
+  titleWrap.className = "dashboard-title-wrap";
+
   const title = document.createElement("h2");
   title.className = "dashboard-title";
   title.textContent = "Airport Performance Dashboard - Toronto Pearson International Airport (YYZ)";
@@ -1162,6 +1204,17 @@ function buildUI() {
   const subtitle = document.createElement("p");
   subtitle.className = "dashboard-subtitle";
   subtitle.textContent = "Operations-focused view for staffing and demand planning, powered by AeroDataBox flight snapshots.";
+
+  const logoWrap = document.createElement("div");
+  logoWrap.className = "dashboard-logo-wrap";
+  const logo = document.createElement("img");
+  logo.className = "dashboard-logo";
+  logo.src = "./toronto-pearson-logo.png";
+  logo.alt = "Toronto Pearson logo";
+  logoWrap.appendChild(logo);
+
+  titleWrap.append(title, subtitle);
+  header.append(titleWrap, logoWrap);
 
   const topBar = document.createElement("div");
   topBar.className = "top-status-bar";
@@ -1340,7 +1393,7 @@ function buildUI() {
   const arrList = createListPanel("Arrival List");
   listsWrap.append(depList.panel, arrList.panel);
 
-  wrapper.append(title, subtitle, topBar, hrSummaryTitle, scenarioRow, hrGrid, flightSummarySection, heatmapCard, listsWrap);
+  wrapper.append(header, topBar, hrSummaryTitle, scenarioRow, hrGrid, flightSummarySection, heatmapCard, listsWrap);
 
   return {
     wrapper,
