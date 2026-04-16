@@ -43,26 +43,6 @@ title: Project 3
     flex: 1;
   }
 
-  .dashboard-logo-wrap {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-left: 0.6rem;
-  }
-
-  .dashboard-logo {
-    display: block;
-    max-height: 72px;
-    max-width: 240px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    background: #ffffff;
-    border: 1px solid #dbe2ea;
-    border-radius: 8px;
-    padding: 0.25rem 0.4rem;
-  }
-
   .dashboard-subtitle {
     margin: 0.2rem 0 0;
     color: #2f3a4b;
@@ -660,10 +640,6 @@ title: Project 3
       align-items: flex-start;
     }
 
-    .dashboard-logo {
-      max-height: 58px;
-    }
-
     .hr-summary-grid,
     .summary-panel,
     .list-panels {
@@ -674,8 +650,6 @@ title: Project 3
 
 ```js
 const data = await FileAttachment("./data/flights.json").json();
-const dashboardLogoUrl = await FileAttachment("./toronto-pearson-airport-logo.png").url();
-const dashboardLogoFallbackUrl = await FileAttachment("./favicon.svg").url();
 ```
 
 ```js
@@ -1212,19 +1186,8 @@ async function buildUI() {
   subtitle.className = "dashboard-subtitle";
   subtitle.textContent = "Operations-focused view for staffing and demand planning, powered by AeroDataBox flight snapshots.";
 
-  const logoWrap = document.createElement("div");
-  logoWrap.className = "dashboard-logo-wrap";
-  const logo = document.createElement("img");
-  logo.className = "dashboard-logo";
-  logo.src = dashboardLogoUrl;
-  logo.addEventListener("error", () => {
-    logo.src = dashboardLogoFallbackUrl;
-  }, { once: true });
-  logo.alt = "Toronto Pearson logo";
-  logoWrap.appendChild(logo);
-
   titleWrap.append(title, subtitle);
-  header.append(titleWrap, logoWrap);
+  header.append(titleWrap);
 
   const topBar = document.createElement("div");
   topBar.className = "top-status-bar";
