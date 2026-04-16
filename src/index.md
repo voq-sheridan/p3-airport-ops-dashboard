@@ -670,20 +670,6 @@ title: Project 3
 ```js
 const data = await FileAttachment("./data/flights.json").json();
 const dashboardLogoFallbackUrl = await FileAttachment("./favicon.svg").url();
-const torontoPearsonLogoPath = "./toronto-pearson-logo.png";
-
-async function resolveDashboardLogoUrl() {
-  try {
-    const headResp = await fetch(torontoPearsonLogoPath, {
-      method: "HEAD",
-      cache: "no-store"
-    });
-    if (headResp.ok) return `${torontoPearsonLogoPath}?_=${Date.now()}`;
-  } catch {
-    // Ignore and fall back to default logo.
-  }
-  return dashboardLogoFallbackUrl;
-}
 ```
 
 ```js
@@ -1224,7 +1210,7 @@ async function buildUI() {
   logoWrap.className = "dashboard-logo-wrap";
   const logo = document.createElement("img");
   logo.className = "dashboard-logo";
-  logo.src = await resolveDashboardLogoUrl();
+  logo.src = dashboardLogoFallbackUrl;
   logo.alt = "Toronto Pearson logo";
   logoWrap.appendChild(logo);
 
