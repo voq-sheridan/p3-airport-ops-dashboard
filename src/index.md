@@ -1,8 +1,8 @@
 ---
-title: Flight Monitor Visualization - Toronto Pearson International Airport YYZ
+title: Project 3
 ---
 
-# Flight Monitor Visualization - Toronto Pearson International Airport YYZ
+# Project 3
 
 All available flights currently returned by the API feed for departures and arrivals.  
 Data sourced from AeroDataBox via RapidAPI.
