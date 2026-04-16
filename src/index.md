@@ -301,19 +301,22 @@ title: Project 3
 
   .toggle-group {
     display: inline-flex;
-    border: 1px solid var(--border);
+    border: 1px solid #cbd5e1;
     border-radius: 999px;
     overflow: hidden;
     background: #fff;
+    padding: 2px;
   }
 
   .toggle-btn {
     border: 0;
-    background: #fff;
+    border-radius: 999px;
+    background: transparent;
     color: var(--primary);
-    padding: 0.45rem 0.8rem;
-    font-size: 0.82rem;
+    padding: 0.42rem 1rem;
+    font-size: 0.9rem;
     font-weight: 700;
+    line-height: 1;
     cursor: pointer;
   }
 
