@@ -19,7 +19,7 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.7d4d0cfd.json","lastModified":1776360577391,"size":1331522});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.b061af33.json","lastModified":1776360927683,"size":1331021});
 
 define({id: "74213a70", inputs: ["FileAttachment"], outputs: ["data"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
@@ -1703,27 +1703,25 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
   }
 
   .toggle-group {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(180px, 1fr));
-    gap: 0.8rem;
-    width: 100%;
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    overflow: hidden;
   }
 
   .toggle-btn {
-    border: 2px solid #7a7a7a;
-    border-radius: 9px;
+    border: 0;
     background: #fff;
-    color: #374151;
-    padding: 0.7rem 1rem;
-    font-size: 0.95rem;
-    font-weight: 600;
+    color: var(--primary);
+    padding: 0.45rem 0.8rem;
+    font-size: 0.82rem;
+    font-weight: 700;
     cursor: pointer;
   }
 
   .toggle-btn.active {
-    background: #fff;
-    color: #111827;
-    border-color: var(--primary);
+    background: var(--primary);
+    color: #fff;
   }
 
   .heatmap-card {
@@ -2016,7 +2014,7 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
 <div class="observablehq observablehq--block"><!--:4164a993:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T17:28:55">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T17:34:44">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
