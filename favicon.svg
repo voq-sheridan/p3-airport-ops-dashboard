@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Flight Demand Visualizer">
+  <rect width="64" height="64" rx="12" fill="#1d4ed8"/>
+  <path d="M10 36 L54 22 L54 28 L36 34 L54 40 L54 46 L10 32 Z" fill="#ffffff"/>
+  <circle cx="17" cy="33" r="3" fill="#93c5fd"/>
+</svg>
