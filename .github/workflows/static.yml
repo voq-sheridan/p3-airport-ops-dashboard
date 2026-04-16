@@ -22,6 +22,14 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm install --no-audit --no-fund
+      - name: Validate AeroDataBox API key
+        run: |
+          if [ -z "${AERODATABOX_API_KEY:-}" ]; then
+            echo "::error::AERODATABOX_API_KEY secret is missing. Add it in Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+        env:
+          AERODATABOX_API_KEY: ${{ secrets.AERODATABOX_API_KEY }}
       - run: npm run clean || true
       - run: npm run build
         env:
