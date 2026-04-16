@@ -2006,26 +2006,13 @@ function applyNewData(srcData) {
 }
 
 async function fetchLatestFlightsData() {
-  const stablePath = (() => {
-    if (typeof window === "undefined") {
-      return `./data/flights.json?_=${Date.now()}`;
-    }
-    let basePath = window.location.pathname || "/";
-    if (basePath.endsWith("/")) {
-      // already directory
-    } else if (/\.[a-zA-Z0-9]+$/.test(basePath)) {
-      basePath = basePath.replace(/[^/]+$/, "");
-    } else {
-      basePath = `${basePath}/`;
-    }
-    const normalizedBase = basePath.startsWith("/") ? basePath : `/${basePath}`;
-    return `${window.location.origin}${normalizedBase}data/flights.json?_=${Date.now()}`;
-  })();
-
-  const resp = await fetch(stablePath, { cache: "no-store" });
-  if (resp.ok) return await resp.json();
   const attachmentUrl = await FileAttachment("./data/flights.json").url();
-  const fallbackResp = await fetch(`${attachmentUrl}${attachmentUrl.includes("?") ? "&" : "?"}_=${Date.now()}`, { cache: "no-store" });
+  const primaryUrl = `${attachmentUrl}${attachmentUrl.includes("?") ? "&" : "?"}_=${Date.now()}`;
+  const resp = await fetch(primaryUrl, { cache: "no-store" });
+  if (resp.ok) return await resp.json();
+
+  // Fallback for environments where attachment URLs are restricted.
+  const fallbackResp = await fetch(`./data/flights.json?_=${Date.now()}`, { cache: "no-store" });
   if (!fallbackResp.ok) return null;
   return await fallbackResp.json();
 }
