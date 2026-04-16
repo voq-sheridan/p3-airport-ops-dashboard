@@ -19,14 +19,14 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.8b70763c.json","lastModified":1776355735965,"size":1329847});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.d10fb0df.json","lastModified":1776356078211,"size":1329645});
 
 define({id: "74213a70", inputs: ["FileAttachment"], outputs: ["data"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
 return {data};
 }});
 
-define({id: "d38a077a", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getAdvisoryMessage","createMetricCard","staffingScenarios","formatInt","getCoverageIndicatorClass","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedScenario","selectedCell","depHeatmapCache","arrHeatmapCache","renderHrSummary","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","renderSummaryCards","renderFlightListTable","renderFlightLists","renderForSelection","updateToggleButtons","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
+define({id: "b479ecb8", inputs: ["display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getAdvisoryMessage","createMetricCard","staffingScenarios","formatInt","getCoverageIndicatorClass","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedScenario","selectedCell","depHeatmapCache","arrHeatmapCache","renderHrSummary","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","renderSummaryCards","renderFlightListTable","renderFlightLists","renderForSelection","updateToggleButtons","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (display,data,FileAttachment,invalidation) => {
 let d3;
 try {
   d3 = await import("./_npm/d3@7.9.0/66d82917.js");
@@ -718,21 +718,6 @@ function drawDirectionalHeatmap(svg, container, heatmapData, mode, filteredFligh
       })
     );
 
-  if (todayRowIndex >= 0 && currentHour >= 0 && currentHour <= 23) {
-    const x = margin.left + currentHour * (cellSize + gap);
-    const y = margin.top + todayRowIndex * (cellSize + gap);
-    g.append("rect")
-      .attr("x", x - 2)
-      .attr("y", y - 2)
-      .attr("width", cellSize + 4)
-      .attr("height", cellSize + 4)
-      .attr("rx", 5)
-      .attr("fill", "none")
-      .attr("stroke", "#60a5fa")
-      .attr("stroke-width", 1.2)
-      .attr("opacity", 0.85);
-  }
-
   g.selectAll(".heatmap-cell")
     .data(cells)
     .join("rect")
@@ -756,6 +741,26 @@ function drawDirectionalHeatmap(svg, container, heatmapData, mode, filteredFligh
       renderDetailPanel(event, d, mode, filteredFlights);
       renderForSelection();
     });
+
+  if (todayRowIndex >= 0 && currentHour >= 0 && currentHour <= 23) {
+    const x = margin.left + currentHour * (cellSize + gap);
+    const y = margin.top + todayRowIndex * (cellSize + gap);
+    g.append("rect")
+      .attr("class", "current-hour-highlight-under")
+      .attr("x", x - 3)
+      .attr("y", y - 3)
+      .attr("width", cellSize + 6)
+      .attr("height", cellSize + 6)
+      .attr("rx", 6);
+
+    g.append("rect")
+      .attr("class", "current-hour-highlight")
+      .attr("x", x - 3)
+      .attr("y", y - 3)
+      .attr("width", cellSize + 6)
+      .attr("height", cellSize + 6)
+      .attr("rx", 6);
+  }
 
   g.selectAll(".heatmap-total-bg")
     .data(dateKeys)
@@ -1300,6 +1305,22 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
     stroke-width: 2;
   }
 
+  .current-hour-highlight-under {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 3.2;
+    opacity: 0.95;
+    pointer-events: none;
+  }
+
+  .current-hour-highlight {
+    fill: none;
+    stroke: #0ea5e9;
+    stroke-width: 2.2;
+    stroke-dasharray: 4 2;
+    pointer-events: none;
+  }
+
   .heatmap-legend {
     display: flex;
     align-items: flex-start;
@@ -1516,10 +1537,10 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
   }
 </style>
 <div class="observablehq observablehq--block"><!--:74213a70:--></div>
-<div class="observablehq observablehq--block"><!--:d38a077a:--></div>
+<div class="observablehq observablehq--block"><!--:b479ecb8:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T16:08:15">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T16:14:07">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
