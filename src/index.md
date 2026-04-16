@@ -177,6 +177,12 @@ title: Project 3
     margin-top: 0.25rem;
   }
 
+  .metric-inline-note {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
   .coverage-pill {
     display: inline-flex;
     align-items: center;
@@ -764,7 +770,11 @@ function createMetricCard(label) {
   l.textContent = label;
   card.appendChild(n);
   card.appendChild(l);
-  return { card, set: (v) => (n.textContent = v) };
+  return {
+    card,
+    set: (v) => (n.textContent = v),
+    setHtml: (v) => (n.innerHTML = v)
+  };
 }
 
 const staffingScenarios = {
@@ -1246,7 +1256,7 @@ function renderSummaryCards(filteredFlights) {
     : [];
 
   const peakHourLabel = maxFlights > 0
-    ? `${formatHourLabel(peakHourIndex)}–${formatHourLabel((peakHourIndex + 1) % 24)} (${maxFlights})`
+    ? `${formatHourLabel(peakHourIndex)}–${formatHourLabel((peakHourIndex + 1) % 24)} <span class="metric-inline-note">(${maxFlights} flights)</span>`
     : "—";
 
   const busiestPeriodLabel = peakHours.length
@@ -1257,7 +1267,7 @@ function renderSummaryCards(filteredFlights) {
   const departures = flightsToday.filter((f) => isYYZDeparture(f)).length;
 
   ui.metrics.total.set(String(flightsToday.length));
-  ui.metrics.peak.set(peakHourLabel);
+  ui.metrics.peak.setHtml(peakHourLabel);
   ui.metrics.split.set(`${arrivals} : ${departures}`);
   ui.metrics.busiest.set(busiestPeriodLabel);
 }
