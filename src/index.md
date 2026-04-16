@@ -74,6 +74,29 @@ title: Project 3
     font-weight: 800;
   }
 
+  .scenario-row {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: -0.1rem;
+  }
+
+  .scenario-label {
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .scenario-select {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.28rem 0.45rem;
+  }
+
   .hr-card,
   .metric-card {
     border: 1px solid var(--border);
@@ -102,11 +125,23 @@ title: Project 3
   }
 
   .coverage-status-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     margin-top: 0.25rem;
     color: #111827;
     font-size: 2rem;
     font-weight: 800;
   }
+
+  .coverage-indicator {
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+
+  .coverage-indicator.adequate { color: #16a34a; }
+  .coverage-indicator.tight { color: #ca8a04; }
+  .coverage-indicator.at-risk { color: #dc2626; }
 
   .hr-value {
     color: var(--primary);
@@ -219,6 +254,15 @@ title: Project 3
     margin-top: 0.7rem;
     font-size: 0.8rem;
     color: var(--muted);
+  }
+
+  .heatmap-legend-title {
+    align-self: center;
+    color: var(--primary);
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-right: 0.25rem;
+    white-space: nowrap;
   }
 
   .heatmap-legend-item {
@@ -666,6 +710,7 @@ function heatmapColor(total) {
 
 function updateHeatmapLegendFromBands(legendEl, bands) {
   legendEl.innerHTML = `
+    <span class="heatmap-legend-title">Flight Volume (Quiet → Peak)</span>
     <span class="heatmap-legend-item"><span class="heatmap-swatch" style="background:#f5f5f5"></span><span class="heatmap-legend-name">Quiet</span><span class="heatmap-legend-range">0</span></span>
     <span class="heatmap-legend-item"><span class="heatmap-swatch" style="background:#fee5d9"></span><span class="heatmap-legend-name">Low</span><span class="heatmap-legend-range">1–${bands.lowMax}</span></span>
     <span class="heatmap-legend-item"><span class="heatmap-swatch" style="background:#fcae91"></span><span class="heatmap-legend-name">Moderate</span><span class="heatmap-legend-range">${bands.moderateMin}–${bands.moderateMax}</span></span>
@@ -702,6 +747,40 @@ function createMetricCard(label) {
   return { card, set: (v) => (n.textContent = v) };
 }
 
+const staffingScenarios = {
+  normal: {
+    scheduled: 31000,
+    standby: 5000,
+    unplannedAbsences: 1500,
+    coverageStatus: "Adequate",
+    coverageMessage: "Healthy staffing buffer for peak hours (08:00–11:00)"
+  },
+  tight: {
+    scheduled: 31000,
+    standby: 4000,
+    unplannedAbsences: 2000,
+    coverageStatus: "Tight",
+    coverageMessage: "Limited buffer during peak hours (08:00–11:00)"
+  },
+  highAbsence: {
+    scheduled: 31000,
+    standby: 3000,
+    unplannedAbsences: 2800,
+    coverageStatus: "At Risk",
+    coverageMessage: "Peak-hour demand may exceed staffing buffer"
+  }
+};
+
+function formatInt(value) {
+  return Number(value || 0).toLocaleString("en-CA");
+}
+
+function getCoverageIndicatorClass(status) {
+  if (status === "Adequate") return "adequate";
+  if (status === "At Risk") return "at-risk";
+  return "tight";
+}
+
 function buildUI() {
   const wrapper = document.createElement("section");
   wrapper.className = "dashboard-shell";
@@ -725,28 +804,40 @@ function buildUI() {
   hrSummaryTitle.className = "section-subtitle";
   hrSummaryTitle.textContent = "HR Summary";
 
+  const scenarioRow = document.createElement("div");
+  scenarioRow.className = "scenario-row";
+  scenarioRow.innerHTML = `<label class="scenario-label" for="staffing-scenario">Staffing Scenario</label>`;
+  const scenarioSelect = document.createElement("select");
+  scenarioSelect.id = "staffing-scenario";
+  scenarioSelect.className = "scenario-select";
+  scenarioSelect.innerHTML = `
+    <option value="normal">Normal Coverage</option>
+    <option value="tight" selected>Tight Staffing</option>
+    <option value="highAbsence">High Absence</option>`;
+  scenarioRow.appendChild(scenarioSelect);
+
   const hrGrid = document.createElement("div");
   hrGrid.className = "hr-summary-grid";
   hrGrid.innerHTML = `
     <div class="hr-card">
       <div class="hr-label">Staff Scheduled (Today)</div>
-      <div class="hr-value">31,000</div>
+      <div class="hr-value" data-hr="scheduled">—</div>
       <div class="hr-subtext">Active workforce scheduled for today's operations</div>
     </div>
     <div class="hr-card">
       <div class="hr-label">Standby / Available Staff</div>
-      <div class="hr-value">4,000</div>
+      <div class="hr-value" data-hr="standby">—</div>
       <div class="hr-subtext">Additional staff available for overtime or call-in</div>
     </div>
     <div class="hr-card">
       <div class="hr-label">Unplanned Absences</div>
-      <div class="hr-value">2,000</div>
+      <div class="hr-value" data-hr="unplannedAbsences">—</div>
       <div class="hr-subtext">Unexpected absences impacting staffing capacity</div>
     </div>
     <div class="hr-card">
       <div class="hr-label">Coverage Status</div>
-      <div class="coverage-status-main">⚠ Tight</div>
-      <div class="hr-subtext" style="font-style:normal; color:#1f2937;">Limited buffer during peak hours (08:00–11:00)</div>
+      <div class="coverage-status-main"><span class="coverage-indicator tight" data-hr="coverageIndicator">●</span><span data-hr="coverageStatus">Tight</span></div>
+      <div class="hr-subtext" style="font-style:normal; color:#1f2937;" data-hr="coverageMessage">—</div>
     </div>`;
 
   const summaryHead = document.createElement("div");
@@ -840,7 +931,7 @@ function buildUI() {
   const arrList = createListPanel("Arrival List");
   listsWrap.append(depList.panel, arrList.panel);
 
-  wrapper.append(title, subtitle, topBar, hrSummaryTitle, hrGrid, summaryHead, summaryPanel, heatmapCard, listsWrap);
+  wrapper.append(title, subtitle, topBar, hrSummaryTitle, scenarioRow, hrGrid, summaryHead, summaryPanel, heatmapCard, listsWrap);
 
   return {
     wrapper,
@@ -856,9 +947,18 @@ function buildUI() {
     arrHeatmapContainer,
     depAdvisory,
     arrAdvisory,
-  heatmapCard,
+    heatmapCard,
     heatmapLegend,
     detailPanel,
+    scenarioSelect,
+    hr: {
+      scheduledEl: hrGrid.querySelector('[data-hr="scheduled"]'),
+      standbyEl: hrGrid.querySelector('[data-hr="standby"]'),
+      absencesEl: hrGrid.querySelector('[data-hr="unplannedAbsences"]'),
+      coverageIndicatorEl: hrGrid.querySelector('[data-hr="coverageIndicator"]'),
+      coverageStatusEl: hrGrid.querySelector('[data-hr="coverageStatus"]'),
+      coverageMessageEl: hrGrid.querySelector('[data-hr="coverageMessage"]')
+    },
     depListBody: depList.body,
     arrListBody: arrList.body
   };
@@ -872,9 +972,20 @@ let lastFetchedAtIso = data?.fetchedAt || null;
 let fetchedAt = data?.fetchedAt ? new Date(data.fetchedAt) : null;
 let loadedDates = data?.dates || {};
 let selectedFlightType = "international";
+let selectedScenario = "tight";
 let selectedCell = null;
 let depHeatmapCache = null;
 let arrHeatmapCache = null;
+
+function renderHrSummary() {
+  const scenario = staffingScenarios[selectedScenario] || staffingScenarios.tight;
+  ui.hr.scheduledEl.textContent = formatInt(scenario.scheduled);
+  ui.hr.standbyEl.textContent = formatInt(scenario.standby);
+  ui.hr.absencesEl.textContent = formatInt(scenario.unplannedAbsences);
+  ui.hr.coverageStatusEl.textContent = scenario.coverageStatus;
+  ui.hr.coverageMessageEl.textContent = scenario.coverageMessage;
+  ui.hr.coverageIndicatorEl.className = `coverage-indicator ${getCoverageIndicatorClass(scenario.coverageStatus)}`;
+}
 
 function updateClock() {
   const now = new Date();
@@ -1090,13 +1201,6 @@ function renderAdvisory(box, label, heatmapData) {
     <div>${getAdvisoryMessage(level)}</div>`;
 }
 
-function periodLabel(hour) {
-  if (hour < 6) return "Overnight";
-  if (hour < 12) return "Morning";
-  if (hour < 18) return "Afternoon";
-  return "Evening";
-}
-
 function renderSummaryCards(filteredFlights) {
   const todayKey = torontoDateKey(new Date());
   const flightsToday = filteredFlights.filter((f) => {
@@ -1111,18 +1215,31 @@ function renderSummaryCards(filteredFlights) {
     hourly[torontoHour(dt)] += 1;
   });
 
-  let peakHour = 0;
-  for (let i = 1; i < 24; i++) {
-    if (hourly[i] > hourly[peakHour]) peakHour = i;
-  }
+  const maxFlights = Math.max(...hourly);
+  const peakHourIndex = hourly.indexOf(maxFlights);
+  const threshold = maxFlights * 0.9;
+  const peakHours = maxFlights > 0
+    ? hourly
+        .map((v, i) => ({ v, i }))
+        .filter((d) => d.v >= threshold)
+        .map((d) => d.i)
+    : [];
+
+  const peakHourLabel = maxFlights > 0
+    ? `${formatHourLabel(peakHourIndex)}–${formatHourLabel((peakHourIndex + 1) % 24)} (${maxFlights})`
+    : "—";
+
+  const busiestPeriodLabel = peakHours.length
+    ? `${formatHourLabel(Math.min(...peakHours))}–${formatHourLabel(Math.max(...peakHours) + 1)}`
+    : "—";
 
   const arrivals = flightsToday.filter((f) => isYYZArrival(f)).length;
   const departures = flightsToday.filter((f) => isYYZDeparture(f)).length;
 
   ui.metrics.total.set(String(flightsToday.length));
-  ui.metrics.peak.set(`${formatHourLabel(peakHour)} (${hourly[peakHour]})`);
+  ui.metrics.peak.set(peakHourLabel);
   ui.metrics.split.set(`${arrivals} : ${departures}`);
-  ui.metrics.busiest.set(periodLabel(peakHour));
+  ui.metrics.busiest.set(busiestPeriodLabel);
 }
 
 function renderFlightListTable(el, flights, typeBadge, locationHeader, emptyText) {
@@ -1226,6 +1343,11 @@ ui.internationalBtn.addEventListener("click", () => {
   renderForSelection();
 });
 
+ui.scenarioSelect.addEventListener("change", (event) => {
+  selectedScenario = event.target.value;
+  renderHrSummary();
+});
+
 function applyNewData(srcData) {
   allFlights = (srcData?.flights ?? []).map(normalizeFlightRecord);
   loadedDates = srcData?.dates || loadedDates;
@@ -1286,6 +1408,7 @@ const refreshTimer = setInterval(async () => {
 
 const clockTimer = setInterval(updateClock, 1000);
 updateClock();
+renderHrSummary();
 applyNewData(data);
 
 if (data.error) {
