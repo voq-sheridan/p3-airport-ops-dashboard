@@ -15,7 +15,11 @@ title: Project 3
   .dashboard-shell {
     color: var(--primary);
     display: grid;
-    gap: 0.95rem;
+    gap: 0.85rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 0.85rem;
   }
 
   .dashboard-title {
@@ -224,6 +228,7 @@ title: Project 3
     display: flex;
     align-items: center;
     justify-content: center;
+  }
 
   .insights-dots {
     display: inline-flex;
@@ -266,24 +271,30 @@ title: Project 3
     font-weight: 700;
   }
 
-  .flight-summary-head {
+  .flight-summary-section {
     border: 1px solid var(--border);
     border-radius: 12px;
+    background: #f8fafc;
     padding: 0.75rem;
-    background: var(--surface);
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .flight-summary-head {
+    padding: 0.05rem 0.05rem 0;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 0.75rem;
+    gap: 0.6rem;
     align-items: center;
   }
 
   .flight-summary-head h3 {
     margin: 0;
     color: var(--primary);
-    font-size: 1.95rem;
+    font-size: 1.05rem;
     font-weight: 800;
-    line-height: 1.05;
+    line-height: 1.15;
   }
 
   .heatmap-section-title {
@@ -295,7 +306,7 @@ title: Project 3
 
   .last-updated {
     margin-top: 0.18rem;
-    font-size: 0.95rem;
+    font-size: 0.8rem;
     color: var(--muted);
   }
 
@@ -313,8 +324,8 @@ title: Project 3
     border-radius: 999px;
     background: transparent;
     color: var(--primary);
-    padding: 0.42rem 1rem;
-    font-size: 0.9rem;
+  padding: 0.38rem 0.9rem;
+  font-size: 0.82rem;
     font-weight: 700;
     line-height: 1;
     cursor: pointer;
@@ -328,8 +339,8 @@ title: Project 3
   .heatmap-card {
     border: 1px solid var(--border);
     border-radius: 12px;
-    background: var(--surface);
-    padding: 0.85rem;
+    background: #ffffff;
+    padding: 0.75rem;
     position: relative;
   }
 
@@ -408,7 +419,7 @@ title: Project 3
     margin-top: 0.45rem;
     border: 1px solid var(--border);
     border-radius: 10px;
-    background: #ffffff;
+    background: #fbfcfe;
     color: var(--primary);
     font-size: 0.82rem;
     padding: 0.55rem 0.7rem;
@@ -492,7 +503,7 @@ title: Project 3
     display: grid;
     grid-template-columns: repeat(2, minmax(300px, 1fr));
     gap: 1rem;
-    align-items: start;
+    align-items: stretch;
   }
 
   .list-panel {
@@ -500,6 +511,8 @@ title: Project 3
     border-radius: 10px;
     background: #fff;
     padding: 0.65rem;
+    display: flex;
+    flex-direction: column;
   }
 
   .list-panel-header {
@@ -1212,6 +1225,10 @@ function buildUI() {
   Object.values(metrics).forEach((m) => summaryPanel.appendChild(m.card));
   summaryPanel.appendChild(insightsCarousel.card);
 
+  const flightSummarySection = document.createElement("section");
+  flightSummarySection.className = "flight-summary-section";
+  flightSummarySection.append(summaryHead, summaryPanel);
+
   const heatmapCard = document.createElement("section");
   heatmapCard.className = "heatmap-card";
   heatmapCard.innerHTML = `<div class="heatmap-section-title">Departures Heatmap</div>`;
@@ -1312,7 +1329,7 @@ function buildUI() {
   const arrList = createListPanel("Arrival List");
   listsWrap.append(depList.panel, arrList.panel);
 
-  wrapper.append(title, subtitle, topBar, hrSummaryTitle, scenarioRow, hrGrid, summaryHead, summaryPanel, heatmapCard, listsWrap);
+  wrapper.append(title, subtitle, topBar, hrSummaryTitle, scenarioRow, hrGrid, flightSummarySection, heatmapCard, listsWrap);
 
   return {
     wrapper,
