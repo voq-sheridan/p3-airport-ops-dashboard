@@ -2,10 +2,6 @@
 title: Project 3
 ---
 
-# Airport Performance Dashboard - Toronto Pearson International Airport (YYZ)
-
-Operations-focused view for staffing and demand planning, powered by AeroDataBox flight snapshots.
-
 <style>
   :root {
     --primary: #051F48;
@@ -28,6 +24,12 @@ Operations-focused view for staffing and demand planning, powered by AeroDataBox
     font-size: 2rem;
     line-height: 1.2;
     font-weight: 800;
+  }
+
+  .dashboard-subtitle {
+    margin: 0.2rem 0 0;
+    color: #2f3a4b;
+    font-size: 0.95rem;
   }
 
   .top-status-bar {
@@ -670,6 +672,10 @@ function buildUI() {
   title.className = "dashboard-title";
   title.textContent = "Airport Performance Dashboard - Toronto Pearson International Airport (YYZ)";
 
+  const subtitle = document.createElement("p");
+  subtitle.className = "dashboard-subtitle";
+  subtitle.textContent = "Operations-focused view for staffing and demand planning, powered by AeroDataBox flight snapshots.";
+
   const topBar = document.createElement("div");
   topBar.className = "top-status-bar";
   const timeEl = document.createElement("div");
@@ -776,7 +782,7 @@ function buildUI() {
   const arrList = createListPanel("Arrival List");
   listsWrap.append(depList.panel, arrList.panel);
 
-  wrapper.append(title, topBar, hrGrid, summaryHead, summaryPanel, heatmapCard, listsWrap);
+  wrapper.append(title, subtitle, topBar, hrGrid, summaryHead, summaryPanel, heatmapCard, listsWrap);
 
   return {
     wrapper,
