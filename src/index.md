@@ -42,7 +42,13 @@ title: Project 3
     align-items: center;
     color: var(--primary);
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 1.5rem;
+  }
+
+  .top-status-bar > div {
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.1;
   }
 
   .top-status-bar .olive-dot {
