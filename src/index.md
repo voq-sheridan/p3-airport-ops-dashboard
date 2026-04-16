@@ -183,6 +183,91 @@ title: Project 3
     font-weight: 600;
   }
 
+  .insights-carousel {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 0.28rem;
+    min-height: 104px;
+  }
+
+  .insights-title {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .insights-body {
+    transition: opacity 240ms ease;
+    opacity: 1;
+  }
+
+  .insights-body.fading {
+    opacity: 0;
+  }
+
+  .insights-metric {
+    color: var(--primary);
+    font-size: 1.08rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .insights-arrow {
+    color: var(--accent);
+    margin-left: 0.2rem;
+    font-weight: 900;
+  }
+
+  .insights-support {
+    margin-top: 0.18rem;
+    color: var(--muted);
+    font-size: 0.74rem;
+    line-height: 1.3;
+  }
+
+  .insights-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem;
+    margin-top: 0.1rem;
+  }
+
+  .insights-arrow-btn {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--primary);
+    font-size: 0.76rem;
+    font-weight: 800;
+    width: 22px;
+    height: 22px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .insights-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.22rem;
+    margin: 0 auto;
+  }
+
+  .insights-dot {
+    border: 0;
+    background: transparent;
+    color: #a3afbf;
+    font-size: 0.95rem;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .insights-dot.active {
+    color: var(--primary);
+  }
+
   .coverage-pill {
     display: inline-flex;
     align-items: center;
@@ -746,6 +831,27 @@ function aggregateAirlines(flights) {
     .sort((a, b) => b[1] - a[1]);
 }
 
+function getDelayMinutes(flight) {
+  const directDelay = [flight?.delayMinutes, flight?.delay, flight?.delayMin]
+    .find((v) => Number.isFinite(Number(v)));
+  if (Number.isFinite(Number(directDelay))) return Number(directDelay);
+
+  const scheduled = toLocalDate(flight?.scheduledTime);
+  const comparisonIso =
+    flight?.revisedTime ||
+    flight?.actualTime ||
+    flight?.estimatedTime ||
+    flight?.predictedTime ||
+    flight?.departure?.revisedTime ||
+    flight?.departure?.actualTime ||
+    flight?.arrival?.revisedTime ||
+    flight?.arrival?.actualTime;
+  const comparison = toLocalDate(comparisonIso);
+
+  if (!scheduled || !comparison) return 0;
+  return Math.round((comparison.getTime() - scheduled.getTime()) / 60000);
+}
+
 function isYYZDeparture(f) {
   return (f.departureIata || "").toUpperCase() === "YYZ" || f.type === "departure";
 }
@@ -892,6 +998,165 @@ function createMetricCard(label) {
   };
 }
 
+function createOperationalInsightsCarouselCard() {
+  const card = document.createElement("div");
+  card.className = "metric-card";
+
+  const root = document.createElement("div");
+  root.className = "insights-carousel";
+
+  const titleEl = document.createElement("div");
+  titleEl.className = "insights-title";
+  titleEl.textContent = "Operational Insights";
+
+  const bodyEl = document.createElement("div");
+  bodyEl.className = "insights-body";
+
+  const nav = document.createElement("div");
+  nav.className = "insights-nav";
+
+  const leftBtn = document.createElement("button");
+  leftBtn.type = "button";
+  leftBtn.className = "insights-arrow-btn";
+  leftBtn.setAttribute("aria-label", "Previous insight");
+  leftBtn.textContent = "<";
+
+  const dots = document.createElement("div");
+  dots.className = "insights-dots";
+
+  const rightBtn = document.createElement("button");
+  rightBtn.type = "button";
+  rightBtn.className = "insights-arrow-btn";
+  rightBtn.setAttribute("aria-label", "Next insight");
+  rightBtn.textContent = ">";
+
+  nav.append(leftBtn, dots, rightBtn);
+  root.append(titleEl, bodyEl, nav);
+  card.appendChild(root);
+
+  const AUTO_ROTATE_MS = 60 * 1000;
+  const RESUME_DELAY_MS = 8000;
+  let slides = [];
+  let currentSlideIndex = 0;
+  let rotateTimer = null;
+  let resumeTimer = null;
+  let isHovering = false;
+
+  function stopAutoRotate() {
+    if (rotateTimer) {
+      clearInterval(rotateTimer);
+      rotateTimer = null;
+    }
+  }
+
+  function startAutoRotate() {
+    stopAutoRotate();
+    if (isHovering || slides.length <= 1) return;
+    rotateTimer = setInterval(() => {
+      setSlide((currentSlideIndex + 1) % slides.length, false);
+    }, AUTO_ROTATE_MS);
+  }
+
+  function scheduleResume() {
+    if (resumeTimer) clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(() => {
+      if (!isHovering) startAutoRotate();
+    }, RESUME_DELAY_MS);
+  }
+
+  function renderDots() {
+    dots.innerHTML = "";
+    slides.forEach((_, i) => {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = `insights-dot${i === currentSlideIndex ? " active" : ""}`;
+      dot.setAttribute("aria-label", `Go to insight ${i + 1}`);
+      dot.textContent = "●";
+      dot.addEventListener("click", () => {
+        stopAutoRotate();
+        setSlide(i, true);
+        scheduleResume();
+      });
+      dots.appendChild(dot);
+    });
+  }
+
+  function renderSlide(slide) {
+    if (!slide) {
+      bodyEl.innerHTML = '<div class="insights-metric">—</div><div class="insights-support">No insight available.</div>';
+      return;
+    }
+
+    const arrowMarkup = slide.arrow ? `<span class="insights-arrow">${slide.arrow}</span>` : "";
+    bodyEl.innerHTML = `
+      <div class="insights-title">${slide.title}</div>
+      <div class="insights-metric">${slide.metric}${arrowMarkup}</div>
+      <div class="insights-support">${slide.support}</div>`;
+  }
+
+  function setSlide(nextIndex, withFade = true) {
+    if (!slides.length) {
+      renderSlide(null);
+      renderDots();
+      return;
+    }
+
+    currentSlideIndex = ((nextIndex % slides.length) + slides.length) % slides.length;
+
+    if (!withFade) {
+      renderSlide(slides[currentSlideIndex]);
+      renderDots();
+      return;
+    }
+
+    bodyEl.classList.add("fading");
+    setTimeout(() => {
+      renderSlide(slides[currentSlideIndex]);
+      renderDots();
+      bodyEl.classList.remove("fading");
+    }, 140);
+  }
+
+  leftBtn.addEventListener("click", () => {
+    stopAutoRotate();
+    setSlide(currentSlideIndex - 1, true);
+    scheduleResume();
+  });
+
+  rightBtn.addEventListener("click", () => {
+    stopAutoRotate();
+    setSlide(currentSlideIndex + 1, true);
+    scheduleResume();
+  });
+
+  card.addEventListener("mouseenter", () => {
+    isHovering = true;
+    stopAutoRotate();
+  });
+
+  card.addEventListener("mouseleave", () => {
+    isHovering = false;
+    startAutoRotate();
+  });
+
+  return {
+    card,
+    setSlides(nextSlides) {
+      slides = Array.isArray(nextSlides) ? nextSlides.slice(0, 4) : [];
+      if (currentSlideIndex >= slides.length) currentSlideIndex = 0;
+      setSlide(currentSlideIndex, false);
+      startAutoRotate();
+    },
+    stop() {
+      stopAutoRotate();
+      if (resumeTimer) {
+        clearTimeout(resumeTimer);
+        resumeTimer = null;
+      }
+    }
+  };
+}
+
 const staffingScenarios = {
   normal: {
     scheduled: 31000,
@@ -1002,13 +1267,14 @@ function buildUI() {
 
   const summaryPanel = document.createElement("div");
   summaryPanel.className = "summary-panel";
+  const insightsCarousel = createOperationalInsightsCarouselCard();
   const metrics = {
     total: createMetricCard("Total Flights (Today)"),
     peak: createMetricCard("Peak Hour"),
-    split: createMetricCard("Arrivals vs Departures"),
-    busiest: createMetricCard("Busiest Period")
+    split: createMetricCard("Arrivals vs Departures")
   };
   Object.values(metrics).forEach((m) => summaryPanel.appendChild(m.card));
+  summaryPanel.appendChild(insightsCarousel.card);
 
   const heatmapCard = document.createElement("section");
   heatmapCard.className = "heatmap-card";
@@ -1120,6 +1386,7 @@ function buildUI() {
     domesticBtn,
     internationalBtn,
     metrics,
+  insightsCarousel,
     depHeatmapSvg,
     depHeatmapContainer,
     arrHeatmapSvg,
@@ -1454,29 +1721,88 @@ function renderSummaryCards(filteredFlights) {
 
   const maxFlights = Math.max(...hourly);
   const peakHourIndex = hourly.indexOf(maxFlights);
-  const threshold = maxFlights * 0.9;
-  const peakHours = maxFlights > 0
-    ? hourly
-        .map((v, i) => ({ v, i }))
-        .filter((d) => d.v >= threshold)
-        .map((d) => d.i)
-    : [];
 
   const peakHourLabel = maxFlights > 0
     ? `${formatHourLabel(peakHourIndex)}–${formatHourLabel((peakHourIndex + 1) % 24)} <span class="metric-inline-note">(${maxFlights} flights)</span>`
     : "—";
 
-  const busiestPeriodLabel = peakHours.length
-    ? `${formatHourLabel(Math.min(...peakHours))}–${formatHourLabel(Math.max(...peakHours) + 1)}`
-    : "—";
-
   const arrivals = flightsToday.filter((f) => isYYZArrival(f)).length;
   const departures = flightsToday.filter((f) => isYYZDeparture(f)).length;
+
+  const yesterdayKey = shiftDateKey(todayKey, -1);
+  const flightsYesterday = filteredFlights.filter((f) => {
+    const dt = toLocalDate(f.scheduledTime);
+    return dt && torontoDateKey(dt) === yesterdayKey;
+  });
+
+  const DELAY_THRESHOLD = 15;
+  const calcOnTimeRate = (flights) => {
+    if (!flights.length) return 0;
+    const onTime = flights.filter((f) => getDelayMinutes(f) <= DELAY_THRESHOLD).length;
+    return Math.round((onTime / flights.length) * 100);
+  };
+
+  const onTimeToday = calcOnTimeRate(flightsToday);
+  const onTimeYesterday = calcOnTimeRate(flightsYesterday);
+  const onTimeDelta = onTimeToday - onTimeYesterday;
+
+  const now = new Date();
+  const nowKey = torontoDateKey(now);
+  const nowHour = torontoHour(now);
+  const prevHour = nowHour === 0 ? 23 : nowHour - 1;
+  const prevKey = nowHour === 0 ? shiftDateKey(nowKey, -1) : nowKey;
+
+  const delayedInSlot = (dateKey, hour) =>
+    filteredFlights.filter((f) => {
+      const dt = toLocalDate(f.scheduledTime);
+      if (!dt) return false;
+      return torontoDateKey(dt) === dateKey && torontoHour(dt) === hour && getDelayMinutes(f) > DELAY_THRESHOLD;
+    }).length;
+
+  const delayedNow = delayedInSlot(nowKey, nowHour);
+  const delayedPrev = delayedInSlot(prevKey, prevHour);
+  const delayedDelta = delayedNow - delayedPrev;
+
+  const topAirline = aggregateAirlines(flightsToday)[0];
+  const topAirlineName = topAirline?.[0] || "No dominant carrier";
+  const topAirlineCount = topAirline?.[1] || 0;
+  const topAirlineShare = flightsToday.length
+    ? Math.round((topAirlineCount / flightsToday.length) * 100)
+    : 0;
+
+  const insightSlides = [
+    {
+      id: "performance",
+      title: "On-Time Performance",
+      metric: `${onTimeToday}%`,
+      arrow: onTimeDelta >= 0 ? "↑" : "↓",
+      support: `${onTimeDelta >= 0 ? "+" : ""}${onTimeDelta}% vs yesterday`
+    },
+    {
+      id: "delays",
+      title: "Delayed Flights",
+      metric: `${delayedNow}`,
+      arrow: delayedDelta > 0 ? "↑" : delayedDelta < 0 ? "↓" : "→",
+      support: `${delayedDelta >= 0 ? "+" : ""}${delayedDelta} vs previous hour`
+    },
+    {
+      id: "peak",
+      title: "Peak Load",
+      metric: `${maxFlights} flights/hour`,
+      support: "Highest demand intensity today"
+    },
+    {
+      id: "airline",
+      title: "Top Airline",
+      metric: `${topAirlineName} (${topAirlineShare}%)`,
+      support: "Largest traffic share today"
+    }
+  ];
 
   ui.metrics.total.set(String(flightsToday.length));
   ui.metrics.peak.setHtml(peakHourLabel);
   ui.metrics.split.set(`${arrivals} : ${departures}`);
-  ui.metrics.busiest.set(busiestPeriodLabel);
+  ui.insightsCarousel.setSlides(insightSlides);
 }
 
 function renderFlightListTable(el, flights, typeBadge, locationHeader, emptyText) {
@@ -1710,6 +2036,7 @@ if (typeof invalidation !== "undefined") {
   invalidation.then(() => {
     clearInterval(refreshTimer);
     clearInterval(clockTimer);
+    ui.insightsCarousel?.stop?.();
   });
 }
 ```
