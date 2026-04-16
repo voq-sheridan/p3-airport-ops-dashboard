@@ -82,6 +82,10 @@ title: Project 3
     padding: 0.65rem 0.7rem;
   }
 
+  .hr-card {
+    background: #E7F4FF;
+  }
+
   .hr-label,
   .metric-label {
     color: var(--muted);
