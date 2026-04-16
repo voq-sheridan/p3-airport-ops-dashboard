@@ -1044,23 +1044,28 @@ function createOperationalInsightsCarouselCard() {
 
   function stopAutoRotate() {
     if (rotateTimer) {
-      clearInterval(rotateTimer);
+      clearTimeout(rotateTimer);
       rotateTimer = null;
     }
   }
 
-  function startAutoRotate() {
+  function queueNextAutoRotate(delayMs = AUTO_ROTATE_MS) {
     stopAutoRotate();
     if (isHovering || slides.length <= 1) return;
-    rotateTimer = setInterval(() => {
-      setSlide((currentSlideIndex + 1) % slides.length, false);
-    }, AUTO_ROTATE_MS);
+    rotateTimer = setTimeout(() => {
+      setSlide((currentSlideIndex + 1) % slides.length, true);
+      queueNextAutoRotate(AUTO_ROTATE_MS);
+    }, delayMs);
+  }
+
+  function startAutoRotate() {
+    queueNextAutoRotate(AUTO_ROTATE_MS);
   }
 
   function scheduleResume() {
     if (resumeTimer) clearTimeout(resumeTimer);
     resumeTimer = setTimeout(() => {
-      if (!isHovering) startAutoRotate();
+      if (!isHovering) queueNextAutoRotate(AUTO_ROTATE_MS);
     }, RESUME_DELAY_MS);
   }
 
@@ -1136,7 +1141,7 @@ function createOperationalInsightsCarouselCard() {
 
   card.addEventListener("mouseleave", () => {
     isHovering = false;
-    startAutoRotate();
+    queueNextAutoRotate(1200);
   });
 
   return {
@@ -1145,7 +1150,7 @@ function createOperationalInsightsCarouselCard() {
       slides = Array.isArray(nextSlides) ? nextSlides.slice(0, 4) : [];
       if (currentSlideIndex >= slides.length) currentSlideIndex = 0;
       setSlide(currentSlideIndex, false);
-      startAutoRotate();
+      queueNextAutoRotate(AUTO_ROTATE_MS);
     },
     stop() {
       stopAutoRotate();
