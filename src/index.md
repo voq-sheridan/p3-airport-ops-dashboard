@@ -1231,7 +1231,7 @@ function buildUI() {
 
   const heatmapCard = document.createElement("section");
   heatmapCard.className = "heatmap-card";
-  heatmapCard.innerHTML = `<div class="heatmap-section-title">Departures Heatmap</div>`;
+  heatmapCard.innerHTML = `<div class="heatmap-section-title">Departure Demand by Hour</div>`;
   const depHeatmapContainer = document.createElement("div");
   depHeatmapContainer.className = "heatmap-container";
   const depHeatmapSvg = d3.select(depHeatmapContainer).append("svg").attr("class", "heatmap-svg");
@@ -1241,7 +1241,7 @@ function buildUI() {
 
   const arrTitle = document.createElement("div");
   arrTitle.className = "heatmap-section-title";
-  arrTitle.textContent = "Arrivals Heatmap";
+  arrTitle.textContent = "Arrival Demand by Hour";
   const arrHeatmapContainer = document.createElement("div");
   arrHeatmapContainer.className = "heatmap-container";
   const arrHeatmapSvg = d3.select(arrHeatmapContainer).append("svg").attr("class", "heatmap-svg");
