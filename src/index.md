@@ -91,7 +91,7 @@ title: Project 3
 
   .metric-num {
     color: var(--primary);
-    font-size: 1.25rem;
+    font-size: 2rem;
     font-weight: 800;
     margin-top: 0.25rem;
   }
