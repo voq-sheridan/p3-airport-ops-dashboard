@@ -19,7 +19,7 @@
 import {define} from "./_observablehq/client.c08d149b.js";
 import {registerFile} from "./_observablehq/stdlib.277aeab8.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.f7c7ee23.json","lastModified":1776373401130,"size":1332949});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.0bd83bd5.json","lastModified":1776373578735,"size":1333288});
 
 define({id: "74213a70", inputs: ["FileAttachment"], outputs: ["data"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
@@ -1775,6 +1775,11 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
     fill: #4a5668;
   }
 
+  .heatmap-hour-label,
+  .heatmap-date-label {
+    font-size: 0.86rem;
+  }
+
   .heatmap-cell-selected {
     stroke: var(--primary);
     stroke-width: 2;
@@ -2043,7 +2048,7 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
 <div class="observablehq observablehq--block"><!--:f2282f0d:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T21:02:38">Apr 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-16T21:05:37">Apr 16, 2026</a>.</div>
 </footer>
 </div>
 </body>
