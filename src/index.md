@@ -483,8 +483,16 @@ function filterFlightsByType(flights, type) {
     return flights.filter((flight) => {
       const dep = flight.departure?.airport?.countryCode;
       const arr = flight.arrival?.airport?.countryCode;
-      if (!dep || !arr) return false;
-      return dep === arr || (dep === "CA" && arr === "CA");
+
+      // Primary rule: same-country flights are domestic.
+      const strictDomestic = !!dep && !!arr && dep === arr;
+
+      // Fallback for sparse API records:
+      // if origin is in Canada but destination country is missing,
+      // keep these visible under Domestic instead of dropping all rows.
+      const originCanadaFallback = dep === "CA" && !arr;
+
+      return strictDomestic || originCanadaFallback;
     });
   }
 
