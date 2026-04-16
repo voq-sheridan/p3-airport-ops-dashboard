@@ -278,7 +278,14 @@ title: Project 3
     align-items: center;
   }
 
-  .flight-summary-head h3,
+  .flight-summary-head h3 {
+    margin: 0;
+    color: var(--primary);
+    font-size: 1.95rem;
+    font-weight: 800;
+    line-height: 1.05;
+  }
+
   .heatmap-section-title {
     margin: 0;
     color: var(--primary);
@@ -288,7 +295,7 @@ title: Project 3
 
   .last-updated {
     margin-top: 0.18rem;
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     color: var(--muted);
   }
 
@@ -297,6 +304,7 @@ title: Project 3
     border: 1px solid var(--border);
     border-radius: 999px;
     overflow: hidden;
+    background: #fff;
   }
 
   .toggle-btn {
@@ -318,7 +326,7 @@ title: Project 3
     border: 1px solid var(--border);
     border-radius: 12px;
     background: var(--surface);
-    padding: 0.75rem;
+    padding: 0.85rem;
     position: relative;
   }
 
@@ -397,7 +405,7 @@ title: Project 3
     margin-top: 0.45rem;
     border: 1px solid var(--border);
     border-radius: 10px;
-    background: #fbfcfe;
+    background: #ffffff;
     color: var(--primary);
     font-size: 0.82rem;
     padding: 0.55rem 0.7rem;
@@ -417,13 +425,8 @@ title: Project 3
     font-size: 0.75rem;
     font-weight: 700;
     color: #051F48;
+    background: rgba(145, 156, 0, 0.16);
   }
-
-  .staff-insight-badge.level-quiet { background: #f3f4f6; }
-  .staff-insight-badge.level-low { background: #f5efe0; }
-  .staff-insight-badge.level-moderate { background: #fde6c8; }
-  .staff-insight-badge.level-busy { background: #f9c784; }
-  .staff-insight-badge.level-peak { background: #fca5a5; }
 
   .advisory-subline {
     margin-top: 0.25rem;
