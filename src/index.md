@@ -135,8 +135,28 @@ title: Project 3
   }
 
   .coverage-indicator {
-    font-size: 0.95rem;
+    font-size: 2.95rem;
     line-height: 1;
+    animation: coverage-pulse 2.8s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  @keyframes coverage-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    50% {
+      transform: scale(1.12);
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .coverage-indicator {
+      animation: none;
+    }
   }
 
   .coverage-indicator.adequate { color: #16a34a; }
