@@ -1276,7 +1276,7 @@ async function buildUI() {
   const metrics = {
     total: createMetricCard("Total Flights (Today)"),
     peak: createMetricCard("Peak Hour"),
-    split: createMetricCard("Arrivals vs Departures")
+    split: createMetricCard("🛬 Arrivals vs 🛫 Departures")
   };
   Object.values(metrics).forEach((m) => summaryPanel.appendChild(m.card));
   summaryPanel.appendChild(insightsCarousel.card);
