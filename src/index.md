@@ -1726,13 +1726,11 @@ function renderSummaryCards(filteredFlights) {
   const maxFlights = Math.max(...hourly);
   const peakHourIndex = hourly.indexOf(maxFlights);
 
-  const UPCOMING_PEAK_LOOKAHEAD_HOURS = 5;
   const hourMs = 60 * 60 * 1000;
   const now = new Date();
   const nowDateKey = torontoDateKey(now);
   const nowHour = torontoHour(now);
   const windowStartTs = parseDateKey(nowDateKey).getTime() + nowHour * hourMs;
-  const windowEndTs = windowStartTs + UPCOMING_PEAK_LOOKAHEAD_HOURS * hourMs;
   const upcomingModeHourCounts = new Map();
 
   filteredFlights.forEach((f) => {
@@ -1742,12 +1740,12 @@ function renderSummaryCards(filteredFlights) {
     const dateKey = torontoDateKey(dt);
     const hour = torontoHour(dt);
     const slotTs = parseDateKey(dateKey).getTime() + hour * hourMs;
-    if (slotTs < windowStartTs || slotTs >= windowEndTs) return;
+  if (slotTs < windowStartTs) return;
 
     if (isYYZDeparture(f)) {
       const key = `departure|${slotTs}`;
       if (!upcomingModeHourCounts.has(key)) {
-        upcomingModeHourCounts.set(key, { mode: "departure", slotTs, hour, count: 0 });
+        upcomingModeHourCounts.set(key, { mode: "departure", slotTs, hour, dateKey, count: 0 });
       }
       upcomingModeHourCounts.get(key).count += 1;
     }
@@ -1755,22 +1753,29 @@ function renderSummaryCards(filteredFlights) {
     if (isYYZArrival(f)) {
       const key = `arrival|${slotTs}`;
       if (!upcomingModeHourCounts.has(key)) {
-        upcomingModeHourCounts.set(key, { mode: "arrival", slotTs, hour, count: 0 });
+        upcomingModeHourCounts.set(key, { mode: "arrival", slotTs, hour, dateKey, count: 0 });
       }
       upcomingModeHourCounts.get(key).count += 1;
     }
   });
 
-  const upcomingPeakSlot = Array.from(upcomingModeHourCounts.values()).sort((a, b) => {
-    if (b.count !== a.count) return b.count - a.count;
+  const upcomingSlots = Array.from(upcomingModeHourCounts.values());
+  const upcomingPeakCount = d3.max(upcomingSlots, (d) => d.count) || 0;
+  const upcomingPeakSlot = upcomingSlots
+    .filter((d) => d.count === upcomingPeakCount)
+    .sort((a, b) => {
     if (a.slotTs !== b.slotTs) return a.slotTs - b.slotTs;
     if (a.mode === b.mode) return 0;
     return a.mode === "departure" ? -1 : 1;
-  })[0];
+    })[0];
+
+  const dayPrefix = upcomingPeakSlot
+    ? (upcomingPeakSlot.dateKey === nowDateKey ? "Today" : "Next")
+    : "";
 
   const peakHourLabel = upcomingPeakSlot
-    ? `${upcomingPeakSlot.mode === "departure" ? "Departure" : "Arrival"}: ${formatHourLabel(upcomingPeakSlot.hour)}–${formatHourLabel((upcomingPeakSlot.hour + 1) % 24)} <span class="metric-inline-note">(${upcomingPeakSlot.count} flights, next ${UPCOMING_PEAK_LOOKAHEAD_HOURS}h)</span>`
-    : `<span class="metric-inline-note">No Departure/Arrival peak in next ${UPCOMING_PEAK_LOOKAHEAD_HOURS}h</span>`;
+    ? `${upcomingPeakSlot.mode === "departure" ? "Departure" : "Arrival"}: ${formatHourLabel(upcomingPeakSlot.hour)}–${formatHourLabel((upcomingPeakSlot.hour + 1) % 24)} <span class="metric-inline-note">(${dayPrefix}, ${upcomingPeakSlot.count} flights)</span>`
+    : `<span class="metric-inline-note">No upcoming Departure/Arrival peak found</span>`;
 
   const arrivals = flightsToday.filter((f) => isYYZArrival(f)).length;
   const departures = flightsToday.filter((f) => isYYZDeparture(f)).length;
