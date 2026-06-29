@@ -10,18 +10,18 @@
 <link rel="preload" as="style" href="./_observablehq/theme-air,near-midnight.b050d634.css">
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
 <link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.b050d634.css">
-<link rel="modulepreload" href="./_observablehq/client.5e1fba0c.js">
+<link rel="modulepreload" href="./_observablehq/client.f23d4cf2.js">
 <link rel="modulepreload" href="./_observablehq/runtime.607a8173.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.f62c0409.js">
 <link rel="icon" href="./_file/favicon.e761dfd5.svg" type="image/svg+xml">
 <script type="module">
 
-import {define} from "./_observablehq/client.5e1fba0c.js";
+import {define} from "./_observablehq/client.f23d4cf2.js";
 import {registerFile} from "./_observablehq/stdlib.f62c0409.js";
 
-registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.9ee27de3.json","lastModified":1782687360832,"size":338});
-registerFile("./favicon.svg", {"name":"./favicon.svg","mimeType":"image/svg+xml","path":"./_file/favicon.e761dfd5.svg","lastModified":1782687219641,"size":302});
-registerFile("./toronto-pearson-airport-logo.png", {"name":"./toronto-pearson-airport-logo.png","mimeType":"image/png","path":"./_file/toronto-pearson-airport-logo.8c2607c0.png","lastModified":1782687219641,"size":28309});
+registerFile("./data/flights.json", {"name":"./data/flights.json","mimeType":"application/json","path":"./_file/data/flights.177a05c7.json","lastModified":1782691297207,"size":338});
+registerFile("./favicon.svg", {"name":"./favicon.svg","mimeType":"image/svg+xml","path":"./_file/favicon.e761dfd5.svg","lastModified":1782691157500,"size":302});
+registerFile("./toronto-pearson-airport-logo.png", {"name":"./toronto-pearson-airport-logo.png","mimeType":"image/png","path":"./_file/toronto-pearson-airport-logo.8c2607c0.png","lastModified":1782691157500,"size":28309});
 
 define({id: "34b7f138", inputs: ["FileAttachment"], outputs: ["data","dashboardLogoUrl","dashboardLogoFallbackUrl"], body: async (FileAttachment) => {
 const data = await FileAttachment("./data/flights.json").json();
@@ -33,7 +33,7 @@ return {data,dashboardLogoUrl,dashboardLogoFallbackUrl};
 define({id: "9e69515b", inputs: ["dashboardLogoUrl","dashboardLogoFallbackUrl","display","data","FileAttachment","invalidation"], outputs: ["d3","toLocalDate","torontoDateKey","torontoHour","parseDateKey","shiftDateKey","formatTimeEt","formatHourLabel","getDateLabel","isWithinTimeRange","filterFlightsByDateAndTime","inferCountryFromIata","getAirlineName","normalizeFlightRecord","filterFlightsByType","aggregateAirlines","getDelayMinutes","isYYZDeparture","isYYZArrival","getHeatmapDateKeys","buildDirectionalHeatmapData","buildHeatmapBands","currentHeatmapBands","heatmapColor","updateHeatmapLegendFromBands","getDemandLevel","getStaffingRecommendation","getDemandBadgeClass","getDepartmentImpact","createMetricCard","createOperationalInsightsCarouselCard","staffingScenarios","formatInt","getCoverageIndicatorClass","buildUI","ui","allFlights","lastFetchedAtIso","fetchedAt","loadedDates","selectedFlightType","selectedScenario","selectedCell","depHeatmapCache","arrHeatmapCache","renderHrSummary","updateClock","getFilteredFlights","getFlightsForCell","renderDetailPanel","drawDirectionalHeatmap","renderAdvisory","renderSummaryCards","renderFlightListTable","updateDateFilterOptions","renderFlightLists","renderForSelection","updateToggleButtons","handleListFilterChange","applyNewData","fetchLatestFlightsData","REFRESH_MS","refreshTimer","clockTimer"], body: async (dashboardLogoUrl,dashboardLogoFallbackUrl,display,data,FileAttachment,invalidation) => {
 let d3;
 try {
-  d3 = await import("./_npm/d3@7.9.0/9153f876.js");
+  d3 = await import("./_npm/d3@7.9.0/388dc4bf.js");
 } catch (err) {
   console.warn("Primary D3 bundle failed to load, falling back to CDN:", err);
   d3 = await import("https://cdn.jsdelivr.net/npm/d3@7/+esm");
@@ -2129,7 +2129,7 @@ return {d3,toLocalDate,torontoDateKey,torontoHour,parseDateKey,shiftDateKey,form
 <div class="observablehq observablehq--block"><!--:9e69515b:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-28T22:53:49">Jun 28, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-28T23:59:25">Jun 28, 2026</a>.</div>
 </footer>
 </div>
 </body>
